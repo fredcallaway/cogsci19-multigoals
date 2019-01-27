@@ -25,10 +25,14 @@
 \usepackage[natbibapa]{apacite}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{xcolor}  % for \todo
 
 
-\title{Limitations on goal representation in hierarchical planning}
- 
+\title{Compositional sub-goal representations for planning and problem-solving}
+
+\newcommand{\todo}[1]{\textcolor{red}{\textsc{[TODO: #1]}}}
+
+
 \author{Anon Y. Mous}
 
 
@@ -47,9 +51,9 @@ planning; hierarchy; goals
 
 \section{Introduction}
 
-Motivating example.
+It's sunday afternoon and you have a list of errands to run before you can return home to watch last night's episode of \textit{The Bachelor}. You need to mail a letter, pick up brocoli for tonight's stir fry, and drop off a book at the library. You are eager to get home to see whether Hannah received one of the coveted roses, and thus want to accomplish these tasks as expediently as possible. There are two library locations, four grocery stores, and who knows how many mail boxes in your town; how do you decide which location of each to visit, and in what order? Unfortunately, you have been presented with the generalized traveling salesman problem, which is known to be NP-hard, i.e. very difficult to solve. You might simplify the problem for yourself by breaking up the problem, choosing one errand at a time and completing it as quickly as you can from wherever the last errand left you. But by ignoring future goals when planning how to accomplish one, you might miss the opportunity to save time by going to the library location that is further from your house, but right next to a grocery store.
 
-Background on problem solving.
+
 
 \subsection{Introduce Towers of Hanoi/London.}
 
