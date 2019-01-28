@@ -26,6 +26,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{xcolor}  % for \todo
+\usepackage{graphicx}
 
 
 \title{Compositional sub-goal representations for planning and problem-solving}
@@ -57,8 +58,7 @@ How might people navigate this tradeoff between complexity and efficiency? One p
 
 
 
-
-\section{Background: Search}
+\subsection{Search and its limitations}
 
 Many of the hallmarks of higher level human cognition, such as problem solving, strategic reasoning, and planning may rely on a single core capacity: search \cite{NewellSimon1972}.
 
@@ -67,10 +67,15 @@ In complex domains, exhaustive search is computationally intractable; thus searc
 \citet{Campitelli2004} show that more skilled chess players search deeper.
 
 
+\subsection{Tower of London}
 
+Tower of London (ToL), introduced in \cite{Shallice1982}, is a variant of Tower of Hanoi (ToH) designed to improve upon ToH to be a graded measure of planning and problem solving ability.  In ToL, three beads of different colors on a board with three sticks of varying lengths (thus resulting in restrictions on the number of beads that can be stacked in a position) must be moved from an initial configuration to match a target configuration.
 
+Our variant of ToL removes restrictions on stack height, marks blocks with alphabet letters, and has a standard goal position instead of having a standard initial position. XX ? Could try to justify these choices as being about simplifying the task of goal representation to dissociate the mapping from visual cues to goal representations from the use of these goal representations in planning ; Could cite Zhang, Norman 94 XX. With these modifications to the rules, our experimental task resembles Blocks World, a domain used to investigate problem solving in artificial intelligence research XXX connect to Sussman.
 
-\subsection{Introduce Towers of Hanoi/London.}
+Prior work (Simon1975) has established various strategies people might use when solving ToH puzzles, and other studies have even taught specific strategies to people to examine the relationship between the underlying cognitive mechanisms implicated by these strategies and measures like response time (Anderson2001) and fMRI signal (Anderson2005).
+
+XXX probably doesn't make sense for right here, needs more intro: The Sussman anomaly exemplifies a case where acting optimally with respect to individual subgoals renders a problem impossible to complete. This issue can be avoided by changing the structure of subgoals or planning with respect to multiple subgoals. More generally, some efficiencies in problems can only be achieved by planning with respect to multiple subgoals as plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in an extraneous move that is avoided when considering multiple subgoals.
 
 \subsection{Introduce idea of limited depth planning.}
 
@@ -79,6 +84,15 @@ Background on hierarchical representation and subgoals.
 Compositional goals/options.
 
 Overview of present work.
+
+\begin{figure}[ht]
+    \centering
+    % HACK should probably be 6cm??
+    % Also should definitely add better demarcation of subgoals to this
+    \includegraphics[width=7cm]{example-4-block}
+    \caption{Planning to stack C on top of D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more optimal, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on top of D and stack B on top of C), an agent will always choose to remove A first since they are optimizing for the eventual placement of B.}
+\end{figure}
+
 
 
 \section{Model}
@@ -98,6 +112,12 @@ We model participant decisions as emerging from a two step hierarchical planning
 In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the other or goal stack (Fig. XX). Only the top block of a stack can be moved, and the board is limited to contain at most 3 spaces for stacks. In all trials, the goal stack contains the same blocks arranged in alphabetical order in the middle space. Participants were asked to complete 3 tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then complete 16 6-block trials which were analyzed below.
 % Following the completion of the trials, participants completed a short survey to assess XXX (do we mention this?).
 % Fred: No, it's to solicit feedback on the experiment, not actually part of the study.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=6cm]{example-block-world}
+    \caption{Interface for each trial. On the left is the initial state which must be rearranged to match the goal state at right.}
+\end{figure}
 
 \subsubsection{Participants}
 We recruited 41 participants from Amazon Mechanical Turk. Each participant received \$2 for completing the task, which took an average of 8.9 minutes.
