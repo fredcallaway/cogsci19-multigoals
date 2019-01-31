@@ -27,14 +27,17 @@
 \usepackage{amssymb}
 \usepackage{xcolor}  % for \todo
 \usepackage{graphicx}
-
+\usepackage{csquotes}
+\MakeOuterQuote{"}
+\usepackage{booktabs}
 
 \title{Compositional sub-goal representations for planning and problem-solving}
 
 \newcommand{\todo}[1]{\textcolor{red}{\textsc{[TODO: #1]}}}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
 
 
-\author{Anon Y. Mous}
+\author{TODO}
 
 
 \begin{document}
@@ -43,7 +46,7 @@
 
 
 \begin{abstract}
-When faced with a large and complex problem, people naturally break it up into several smaller and simpler problems. This hierarchical decomposition of an ultimate goal into sub-goals facilitates planning by reducing the number of factors that must be considered at one time. However, it can also lead to suboptimal decision making, leading one to miss opportunities to make progress towards multiple subgoals with a single action. This potential for suboptimality can be ameliorated by considering multiple subgoals at once, but at the cost of increasing the number of factors that must be considered and thus increasing the computational burden of planning. Here, we present a model of planning with compositional goal representations and show that it explains the errors people make in a Towers of London task better than a limited-depth search model. Our results suggest that people are capable of representing and pursuing multiple subgoals at once, but that the number of subgoals is generally quite limited. Furthermore, we find that the degree of representational limitation may be an important latent dimension for explaining individual differences in planning ability. Finally, we (hopefully!) find that the inferred representational limitations are sensitive to the cost of suboptimal planning, indicating that people may rationally choose a goal representation that trades off between representational costs and decision quality.
+When faced with a large and complex problem, people naturally break it up into several smaller and simpler problems. This hierarchical decomposition of an ultimate goal into sub-goals facilitates planning by reducing the number of factors that must be considered at one time. However, it can also lead to suboptimal decision-making, missing opportunities to make progress towards multiple subgoals with a single action. This potential for suboptimality can be ameliorated by considering multiple subgoals at once, but at the cost of increasing the number of factors that must be considered and thus increasing the computational burden of planning. Here, we present a model of planning with compositional goal representations and show that it explains the errors people make in a Towers of London task better than a limited-depth search model. Our results suggest that people are capable of representing and pursuing multiple subgoals at once, but that the number of subgoals is generally quite limited. Furthermore, we find that the degree to which composite goal representation is limited may be an important latent dimension for explaining individual differences in planning ability. Finally, we (hopefully!) find that the inferred representational limitations are sensitive to the cost of suboptimal planning, indicating that people may rationally choose a goal representation that trades off between representational costs and decision quality.
 
 \textbf{Keywords:} 
 planning; hierarchy; goals
@@ -52,67 +55,98 @@ planning; hierarchy; goals
 
 \section{Introduction}
 
-It's Tuesday afternoon and you have a list of errands to run before you can return home to watch last night's episode of \textit{The Bachelor}. You need to mail a letter, pick up broccoli for tonight's stir fry, and drop off a book at the library. You are eager to get home to see whether Hannah received one of the coveted roses, and thus want to accomplish these tasks as expediently as possible. There are two library locations, four grocery stores, and who knows how many mail boxes in your town; how do you decide which location of each to visit, and in what order? Unfortunately, you have been presented with the generalized traveling salesman problem, which is known to be NP-hard (that is, very difficult to solve). You might simplify the problem by focusing on only one errand at a time, completing it as quickly as possible from wherever the last errand left you. But by ignoring your other tasks when planning how to complete one, you might miss the opportunity to save time by going to the library location that is further from your house, but right next to a grocery store.
+It's Tuesday afternoon and you have a list of errands to run before you can return home to watch last night's episode of \textit{The Bachelor}. You need to mail a letter, pick up broccoli for tonight's stir fry, and drop off a book at the library. You are eager to get home to see whether Hannah B. received one of the coveted roses, and thus want to accomplish these tasks as expediently as possible. There are two library locations, four grocery stores, and who knows how many mail boxes in your town; how do you decide which location of each to visit, and in what order? Unfortunately, you have been presented with the generalized traveling salesman problem, which is known to be NP-hard (that is, potentially very difficult to solve). You might simplify the problem by focusing on only one errand at a time, completing it as quickly as possible from wherever the last errand left you. But by ignoring your other tasks when planning how to complete one, you might miss the opportunity to save time by going to the library location that is further from your house, but right next to a grocery store.
 
-How might people navigate this tradeoff between complexity and efficiency? One possibility is that they choose some subset of goals and construct a plan that is optimal with respect to that subset, asking themselves, for example, "what is the fastest way to get to both a grocery store and a library?" and leaving future goals such as dropping off a letter for future consideration. In this project, we sought evidence for this kind of joint goal pursuit.
+% To solve complex problems, it is necessary to break them down into subproblems [cite AI]. People do this []. The standard model of organizing problems into subproblems 
+
+% The ability of people to solve problems such as these has typically been formulated in terms of search \citep{NewellSimon1972}. Under this theory, people construct a "decision tree" that represents possible courses of actions and their outcomes, searching over the tree for the best possible plan. However, these decision trees can quickly become too large to search exhaustively, necessitating approximation strategies \citep{Huys2015}. A particularly valuable strategy for directing search is \textit{subgoaling} \citep{Donnarumma2016}. By focusing on one subgoal at a time, one can ignore irrelevant actions and features of the environment, effectively reducing the size of the decision tree to search over \citep{Dietterich2000}. However, by dividing the space in this way, one will miss opportunities to make progress towards multiple subgoals at once. Of course, people often \textit{do} identify these opportunities, posing a problem for the standard one-at-a-time model of subgoal pursuit.
+
+The ability of people to solve problems such as these has typically been formulated in terms of search \citep{NewellSimon1972}. Under this theory, people form a plan of action by searching over an internal representation the problem. However, the combinatorial explosion of possible sequences of actions makes exhaustive search intractable in all but the simplest cases. This necessitates approximation strategies \citep{Huys2015}. A particularly valuable strategy for directing search is \textit{subgoaling} \citep{Donnarumma2016}. By focusing on one subgoal at a time, one can ignore irrelevant actions and features of the environment, effectively reducing the dimensionality of the problem space \citep{Dietterich2000}. Importantly, standard goal-setting models assume that subgoals are \textit{context-free} in the sense that they are pursued independently, without consideration of the higher level goal or future subgoals. As a result, opportunities to make progress towards multiple subgoals at once will be missed. Nevertheless, people often \textit{do} identify these opportunities, posing a problem for the standard one-at-a-time model of subgoal pursuit.
+
+How can we reconcile the strong evidence for the role of goals in structuring human behavior \citep{Cooper2006} with the apparent ability of people to "kill two birds with one stone?" One possibility is that, contrary to the standard model, people are not limited to pursuing one goal at a time. That is, perhaps they choose a \textit{subset} of goals, and construct a plan that is optimal with respect to that subset. They might ask themselves, for example, "what is the fastest way to get to both a grocery store and a library?", leaving future goals such as dropping off a letter for future consideration. We formalize this theory in a hierarchical planning framework. At the abstract level, the agent dynamically constructs composite goals (or \textit{multigoals}) from a set of primitive goals. Then, at the concrete level, the agent searches for a plan that achieves the composite goal, disregarding any other potential future goals. To test the model, we first identify a classic task from the problem solving literature that can provide a behavioral signature of the subgoal representations underlying our participant's choices (if such representations exist). Using a Bayesian modeling framework, we can dissociate constraints on the number of subgoals they can pursue at once from goal-agnostic constraints on the depth of search. Finally, we use formal model comparison to demonstrate that the multigoal model explains participant behavior better than both goal-free and single-goal models.
+
+We begin the paper by discussing relevant theoretical approaches to planning and problem solving. We then present a formal model of planning with composite \textit{multigoals}. Next, we present an experiment designed to dissociate the predictions of the multigoal model from those of standard depth-limited search and hierarchical planning models. We discuss the application of the general model to the specific problem, and present model fitting results. We conclude with a discussion of \todo{pull from discussion}.
 
 \section{Background}
 
 \subsection{Search and its limitations}
 
-Many of the hallmarks of higher level human cognition, such as problem solving, strategic reasoning, and planning may rely on a single core capacity: search \cite{NewellSimon1972}. \todo{}
+Many of the hallmarks of higher level human cognition, such as problem solving \citep{NewellSimon1972}, strategic reasoning \citep{Holding1985}, and planning \citep{Simon2011} have been modeled as search over a decision tree. In each case, the problem at hand is represented as a tree, with nodes representing possible future states and branches representing decisions one could make in those states. \todo{Summarize basic findings? Discuss generality?}
 
-In complex domains, exhaustive search is computationally intractable; thus search must be curtailed in some way. When extensive experience is available, people may avoid search by relying on model-free reinforcement learning \citep{Keramati2011,Kool2017} or cached action sequences \citep{Huys2015}. When rewards are dense, they may use these local signals of progress to avoid less promising branches of a decision tree \citep{Huys2012}. However, many of the problems people encounter in their daily lives lack such structure. In such cases, people may simply cut off search at some arbitrary point. The simplest version of this strategy is \textit{depth-limited search}, which (perhaps due to it's simplicity) has been incorporated into many models of human search \citep{MacGregor2001,Keramati2016,Krusche2018}. Under this strategy, the searcher considers all possible action sequences of some length $d$, and chooses the one that gives the best intermediate outcome. For reward-seeking planning, this outcome is the sum of rewards one receives along this path (and perhaps also a learned value of the final state; \citealp{Keramati2016}). In problem solving settings, there are typically no intermediate rewards, and a heuristic estimate of distance to the goal state is used to evaluate partial plans.
+In complex domains, exhaustive search is computationally intractable; thus search must be curtailed in some way. When extensive experience is available, people may avoid search by relying on model-free reinforcement learning \citep{Keramati2011,Kool2017} or cached action sequences \citep{Huys2015}. When rewards are dense, they may use these local signals of progress to avoid less promising branches of a decision tree \citep{Huys2012}. However, many of the problems people encounter in their daily lives lack such structure.
+
+When full search is infeasible and progress cues are limited or unreliable, people may have to impose arbitrary constraints on their search. The simplest such constraint is to put a limit on how far into the future you look. So-called \textit{depth-limited search} has been incorporated into several models of human search \citep{MacGregor2001,Keramati2016,Krusche2018}.
+Under this strategy, the searcher considers all possible action sequences of some length $d$, and chooses the one that gives the best intermediate outcome. How the intermediate outcome is defined depends on the problem domain, and can have substantial effects on the choices that are ultimately made. For planning in reward-maximization problems, this outcome is typically the sum of rewards one receives along this path (perhaps augmented with a learned value of the final state; \citealp{Keramati2016}). In problem solving settings, there are typically no intermediate rewards, and a heuristic estimate of distance to the goal state is used to evaluate partial plans \cite[chap. 5]{Anderson1990}. A good heuristic can reduce or even eliminate the need to look far into the future, resulting in a "hill climbing" strategy. But for more challenging problems, people may require more complex strategies to guide their search.
 
 
-% \citet{Campitelli2004} show that more skilled chess players search deeper.
+\subsection{Subgoals and hierarchical planning}
+Many of the complex problems that people face in their daily lives can naturally be decomposed into smaller problems. People can take advantage of this structure by setting \textit{subgoals}, intermediate goals (e.g. pick up broccoli) that each contribute to achieving a larger goal (cook dinner) which itself may be part of an even broader goal (avoid starvation). This approach can ultimately make decision-making easier, reducing working memory requirements \citep{VanDijk2011} and/or computational complexity \citep{Maisto2015}. However, it also creates a new problem: How should one choose subgoals that will both accomplish the ultimate goal, and also be relatively easy to solve individually? \textit{Hierarchical planning} is one way to answer this question. 
+
+In hierarchical planning, search occurs at different levels of abstraction~\citep{sacerdoti1974planning}. At the top level, one plans over potential sequences of subgoals to pursue in order to accomplish the ultimate goal. Each subgoal then becomes its own planning problem in which one plans over sequences of actions (or perhaps simpler subgoals) to accomplish that subgoal. Hierarchical planning has been studied as a way in which humans learn to solve complex tasks~\citep{botvinick2012hierarchical} and also as a method for scaling up automated planning systems~\citep{kaelbling2010hierarchical}. Research on hierarchical planning has traditionally focused on learning or planning given a particular decomposition~\citep{sacerdoti1974planning, parr1998reinforcement}, and more recent approaches have examined learning hierarchical planning representations through interaction with an environment or from another agent's demonstrations~\citep{bacon2017option, cobo2014abstraction}. From a functional perspective, hierarchical task decompositions enable adaptive systems to trade off behavioral optimality with computational resources. A key question is then what properties of a decomposition facilitate this tradeoff.
 
 
-\subsection{Tower of London}
+% \todo{This might be too much detail for the background}
+% Our work here can be understood as analyzing \textit{subgoal resolution} as a factor in the construction of hierarchical plans in humans. At a particular moment in time, a person will have a subgoal they want to complete. Compare the subgoal ``mail a letter'' with the subgoal ``mail a letter AND go to the grocery''. The second subgoal has higher \textit{resolution} than the first in that it is more specific and picks out a strictly smaller set of states as acceptable for completion. This factor is a key element for any hierarchical planning scheme. For example, in formalisms such as the options framework~\citep{sutton1999between}, macro-actions (i.e., options) are defined in part by the set of states in which one exits an option. Our approach can be understood then as considering the complexity of the predicates defining a termination condition when people hierarchically decompose a task.
 
-Tower of London (ToL), introduced in \cite{Shallice1982}, is a variant of Tower of Hanoi (ToH) designed to improve upon ToH to be a graded measure of planning and problem solving ability.  In ToL, three beads of different colors on a board with three sticks of varying lengths (thus resulting in restrictions on the number of beads that can be stacked in a position) must be moved from an initial configuration to match a target configuration.
-
-Our variant of ToL removes restrictions on stack height, marks blocks with alphabet letters, and has a standard goal position instead of having a standard initial position. XX ? Could try to justify these choices as being about simplifying the task of goal representation to dissociate the mapping from visual cues to goal representations from the use of these goal representations in planning ; Could cite Zhang, Norman 94 XX. With these modifications to the rules, our experimental task resembles Blocks World, a domain used to investigate problem solving in artificial intelligence research XXX connect to Sussman.
-
-Prior work (Simon1975) has established various strategies people might use when solving ToH puzzles, and other studies have even taught specific strategies to people to examine the relationship between the underlying cognitive mechanisms implicated by these strategies and measures like response time (Anderson2001) and fMRI signal (Anderson2005).
-
-XXX probably doesn't make sense for right here, needs more intro: The Sussman anomaly exemplifies a case where acting optimally with respect to individual subgoals renders a problem impossible to complete. This issue can be avoided by changing the structure of subgoals or planning with respect to multiple subgoals. More generally, some efficiencies in problems can only be achieved by planning with respect to multiple subgoals as plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in an extraneous move that is avoided when considering multiple subgoals.
-
-\subsection{Introduce idea of limited depth planning.}
-
-Background on hierarchical representation and subgoals.
-
-Compositional goals/options.
-
-Overview of present work.
-
-\begin{figure}[ht]
+\begin{figure*}[ht]
     \centering
-    % HACK should probably be 6cm??
-    % Also should definitely add better demarcation of subgoals to this
-    \includegraphics[width=7cm]{example-4-block}
-    \caption{Planning to stack C on top of D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more optimal, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on top of D and stack B on top of C), an agent will always choose to remove A first since they are optimizing for the eventual placement of B.}
-\end{figure}
+    \includegraphics[width=0.9\textwidth]{example-4-block}
+    \caption{Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied. \todo{make eps version with matplotlib}}
+\end{figure*}
 
 
 
-\section{Model}
-We model participant decisions as emerging from a two step hierarchical planning procedure. 
+\section{Planning with multigoals}
+\newcommand{\multigoal}{\mathcal{G}}
 
-- Limited depth model
+\todo{Introduction sentence that makes sense given previous section (whatever it is)}
 
-- Limited goal representation model
+Multigoals extend a standard goal-based hierarchical planning algorithm by allowing for new subgoals to be constructed on the fly by composing existing, primitive subgoals. Formally, we define a multigoal,  $\multigoal$, as a set of primitive subgoals. Following the options framework \citep{sutton1999between}, a subgoal $g$ is defined by a function 
+$\beta_g: \mathcal{S} \rightarrow \{0, 1\}$
+that indicates whether a state satisfies the given subgoal. A multigoal is satisfied by a state that satisfies all of its component subgoals; thus, a multigoal's satisfaction function is defined
+$\beta_{\multigoal}(s) = \prod_{g \in \multigoal} \beta_g(s)$. Although multigoals can be integrated into arbitrarily deep hierarchical planning models for stochastic environments, we focus on the simplest case of a two-level hierarchy and a deterministic environment. At the abstract-level the agent chooses a multigoal based on the current state and high-level goal. At the concrete-level, the agent attempts to find a sequence of actions that satisfies the current multigoal.
+
+A full model of abstract-level planning would both identify possible subgoals and also choose which ones to pursue at each step. However, to simplify the problem, we assume that the goals and their ordering are given. That is, the agent receives an ordered set of subgoals $\{ g_1, g_2, \cdots g_n  \}$ such that completing all $n$ subgoals in order amounts to solving the ultimate goal. The abstract-level phase of planning is thus reduced to selecting a number of subgoals to pursue; we call this number $k$. Given a selection of $k$ and the multigoal in a given state, $\multigoal(s; k)$ is simply the set of the next $k$ incomplete subgoals. For example, if $g_1$ has been completed (\beta_{g_1}(s) = 1) and $k=2$, we would have $\multigoal(s; k=2) = \{ g_2, g_3 \}$.
+\red{Is this a good idea? $\rightarrow$ } Admittedly, this simplifying assumption eliminates a considerable amount of interesting complexity. However, it allows us to look for experimental evidence for multigoals without tackling the full problem of multigoal selection. Relaxing this assumption is an important direction for future work.
+
+% \begin{equation}
+%   \multigoal(s; k) = \{g_i \dots g_{i+k-1} \} \text{ s.t. } 
+%     \beta_{g_{i-1}}(s) = 1 \wedge \beta_{g_i}(s) = 0
+% \end{equation}
+
+Given a multigoal $\multigoal$, concrete-level of planning uses tree search to find a lowest-cost path $\pi$ that satisfy all subgoals in $\multigoal$. This search process may be depth-limited. If no path of length $d$ or less can be found that satisfies all the subgoals, the model chooses a path that satisfies the is chosen when multiple paths are found. Thus, the action sequence is chosen by
+
+\begin{equation}\label{eq:concrete}
+  \arg\max_\pi 
+    \sum_{g \in \multigoal} \beta_g(s_\pi) - \lambda |\pi |
+\end{equation}
+
+where $s_\pi$ is the final state on the path defined by the action sequence $\pi$ and $\lambda$ is a very small positive constant (with the effect that $\pi$ is chosen to maximize the first term, using the second term as a tie-breaker).
+
+There are several special cases of the model worth highlighting. When $k = 1$, we recover a standard hierarchical planning algorithm in which only one subgoal is pursued at a time. When $k = \infty$, we recover a standard depth-limited search model with a heuristic cost function defined by the number of incomplete subgoals. When $d = \infty$, the model optimally achieves each multigoal, but may still perform suboptimally because future subgoals are not considered. And when $d = k = \infty$, the model always makes optimal choices.
 
 
+\section{Experiment 1: Measuring human multigoaling}
 
-\section{Experiment}
+To test the predictions of the multigoal model, we conducted a Tower of London (ToL) experiment. Our variant of ToL removes restrictions on stack height and marks blocks with alphabet letters. We also use a single standard goal position where all blocks are stacked alphabetically. With these modifications, there is an unambiguous subgoal ordering \citep{Kaller2011}: One must put blocks in their place in reverse alphabetical order. Thus, the model's simplifying assumption that the order of subgoals is given is innocuous in this specific setting. 
+
+With these modifications to the rules, our experimental task resembles Blocks World, a domain used to investigate problem solving in artificial intelligence research \todo{XXX connect to Sussman}.
+
+\todo{Integrate the text below with the text above, probably cutting some extraneous material}
+
+The Tower of London (ToL) problem, introduced in \cite{Shallice1982}, is a variant of the Tower of Hanoi (ToH) problem designed to provide a graded measure of planning and problem solving ability.  In ToL, three beads of different colors on a board with three sticks of varying lengths (thus resulting in restrictions on the number of beads that can be stacked in a position) must be moved from an initial configuration to match a target configuration.
+
+Prior work \citep{Simon1975} has established various strategies people might use when solving ToH puzzles, and other studies have even taught specific strategies to people to examine the relationship between the underlying cognitive mechanisms implicated by these strategies and measures like response time \citep{Anderson2001} and fMRI signal \citep{Anderson2005}.
+
+\todo{XXX probably doesn't make sense for right here, needs more intro:} The Sussman anomaly exemplifies a case where acting optimally with respect to individual subgoals renders a problem impossible to complete. This issue can be avoided by changing the structure of subgoals or planning with respect to multiple subgoals. More generally, some efficiencies in problems can only be achieved by planning with respect to multiple subgoals as plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in an extraneous move that is avoided when considering multiple subgoals.
+
 
 \subsection{Methods}
 \subsubsection{Stimuli and procedure}
 
-In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the other or goal stack (Fig. XX). Only the top block of a stack can be moved, and the board is limited to contain at most 3 spaces for stacks. In all trials, the goal stack contains the same blocks arranged in alphabetical order in the middle space. Participants were asked to complete 3 tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then complete 16 6-block trials which were analyzed below.
-% Following the completion of the trials, participants completed a short survey to assess XXX (do we mention this?).
-% Fred: No, it's to solicit feedback on the experiment, not actually part of the study.
+In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the other or goal stack (Fig. 2). Only the top block of a stack can be moved, and the board is limited to contain at most three spaces (columns) for stacks. In all trials, the goal stack contains the same blocks arranged in alphabetical order in the middle space. 
+
+Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of model fits between simulated agents with limits on goal representation ($k < XXX$) and depth-limited agents ($d < XXX$) when fit to trials simulated by agents with limits on goal representation.
 
 \begin{figure}[ht]
     \centering
@@ -121,10 +155,107 @@ In each trial, participants are presented with two configurations of stacked blo
 \end{figure}
 
 \subsubsection{Participants}
-We recruited 41 participants from Amazon Mechanical Turk. Each participant received \$2 for completing the task, which took an average of 8.9 minutes.
+We recruited 41 participants from Amazon Mechanical Turk. Each participant received \$2 for completing the task, which took an average of 9 minutes.
+
+\subsection{Model}
+
+\todo{In this section, we describe how we apply our model to this specific task. We also talk about why we just infer k rather than predicting it.}
+
+According to the proposed multigoal model, people can select multiple subgoals to pursue concurrently, attempting to creating a plan that satisfies all $k$ subgoals in the fewest steps. In the experimental task, we define a subgoal as putting a block in its correct final position. Thus, we have an ordered set of subgoals $\{ g_F, g_E, g_D, g_C, g_B, g_A \}$ such that completing them in order necessarily solves the full problem. This satisfies the simplifying assumption required by the model, and \red{it is not unreasonable to assume that such a subgoal structure is apparent to the experimental participants.}
+
+We derive a likelihood function based on Equation~\ref{eq:concrete}. 
+
+We now discuss how to derive a likelihood to use for model fitting and comparison. Conditional on a given multigoal and state, we can compute the probability of any action based on Equation~\ref{eq:concrete} as
+
+\begin{equation}
+\Pr(a \mid s) = (1 - \epsilon) \cdot \Pr(a \mid s) + \epsilon \cdot \mathcal{U}(a \mid A_s)
+\end{equation}
+Let $A_s$ be the set of first actions of optimal paths given by this equation. 
+
+To test the multigoal model, in particular to evaluate whether people show evidence of pursuing more than one goal at a time, we employ formal model comparison. The comparisons of greatest interest are special cases of the full model. A standard depth-limited search model sets $k=\infty$ and has $d$ (the search depth) as a free parameter. A standard hierarchical planning or subgoaling model sets $k=1$, allowing for only one subgoal to be pursued at a time, and also has $d$ as a free parameter. In the full model, both $k$ and $d$ are free.
+
+We consider two hypotheses for how $k$ and $d$ are chosen when they are free parameters. The first hypothesis is that the parameter is fixed for each individual. For example, one person might always consider two subgoals at a time ($k=2$)  and search fourteen steps into the future ($d=14$). The second hypothesis is that $k$ and $d$ vary from decision to decision, but follow some distribution that is particular to each individual. For example, one person might typically consider one subgoal at a time but occasionally pursue two (or rarely, three) subgoals at a time. We consider \red{two possible distributions}: the Geometric distribution and the Poisson distribution. Because these distribution both have a single parameter, introducing a distribution over $k$ and $d$ does not increase the number of parameters in the model. For inference, we integrate out the latent $k$ and $d$ parameters, which requires enumerating each parameter up to the value at which it results in optimal decision making (all greater values give the same prediction of optimal choices).
+
+Finally, to account for participant errors that cannot be well-explained by the model, we introduce an additional parameter, $\epsilon$ which is the probability that a participant chooses a given move randomly.
+
+Since participants may take an action $a$ at a state $s$ that is not predicted by the model
+
+$$
+\Pr(a \mid s) = (1 - \epsilon) \cdot \Pr_t(a \mid s) + \epsilon \cdot \mathcal{U}(a \mid A_s)
+$$
+
+
+\subsection{Fixed-k model}
+
+Models were fit for each participant, with the parameters $\epsilon$ and $k$ fit by Maximum Likelihood Estimation of the joint probability of all actions, where $k$ was varied from 1 to the total number of goals, which is the number of blocks.
+
+\subsection{Fixed-depth model}
+
+Models were fit for each participant, with the parameters $\epsilon$ and $d$ fit by Maximum Likelihood Estimation of the joint probability of all actions, where $d$ was varied from 1 to 13 \todo{}.
+
+\subsection{Geometric-k model}
+
+To fit flexible modulation of $k$ by a participant, we test a model where $k$ is drawn from a Geometric distribution with parameter $p$ as follows
+
+$$
+\Pr_t(a \mid s, p) = \sum_k \Pr(a \mid s, k) \text{Geom}(k; p)
+$$
+
+Models were fit for each participant, with the parameters $\epsilon$ and $p$ fit by Maximum Likelihood Estimation of the joint probability of all actions. \todo{note summing tail $k >= max_k$?} 
+
+\todo{Geometric-d OR Binomial-d OR Joint k/d}
+
+
+% START RESULTS
+
 
 \subsection{Results}
-Long section.
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=6cm]{model-fits}
+    \caption{AIC for model fits. Each point is the model fit across all actions in all problems solved by a single participant.}
+\end{figure}
+
+\begin{table}[t!]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Model         & \# Parameters & AIC   & LL    & \# Participants \\
+\midrule
+Geometric k/d & 3 & \textbf{10537} & -5145 & 21 \\
+Poisson k & 2 & 11234 & -5535 & 3 \\
+Geometric k & 2 & 11250 & -5543 & 2 \\
+Fixed k/d & 3 & 11518 & -5636 & 0 \\
+Fixed k & 2 & 11705 & -5770 & 0 \\
+Poisson d & 2 & 12368 & -6102 & 7 \\
+k=1 & 1 & 12482 & -6200 & 6 \\
+Geometric d & 2 & 13057 & -6446 & 2 \\
+Fixed d & 2 & 13348 & -6592 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{Model comparison: Columns are number of parameters per participant, Akaike information criterion, log likelihood, and the number of participants best fit by the model.}
+%, and Number of Participants best fit by the model (with parameters optimized separately)
+\end{table}
+
+ 
+Models were fit for each participant, see Figure 3.
+
+Models with distributions over model parameters $k$ and $d$ were generally better fits than those with fixed parameters (Geometric over k AIC 11250.0, Fixed k AIC 11705.7, Geometric over d AIC 13057.7, Fixed d AIC 13348.5), suggesting that people flexibly adapt these limitations on planning.
+
+Models with distributions over $k$ (AIC 11250.0) were better fits than models with distributions over $d$ (AIC 12152.8) in 28 out of 41 participants, suggesting that goal-based planning may better explain participant actions than depth limits in this task.
+
+Of particular note is that many participants are best explained by a $k=1$ model or Geometric distribution with large $p$ (which acts like the $k=1$ model with probability $p$). The case of $k=1$ amounts to simple hierarchical planning, where search finds optimal paths towards the next incomplete subgoal. It's particularly interesting that the $k=1$ (AIC 12482.7) is a comparable fit to the best depth model (AIC 12152.8) in 27 out of 41 participants, suggesting that in at least this task even very simple goal representations are a strong constraint on search that can explain action comparably to well-established models of search.
+
+The joint model with Geometric distributions over $k$ and $d$ is the best fit for 22 out of 41 participants and best overall fit (AIC 10537.6), suggesting that jointly considering these limits is essential to explaining action in our task.
+
+\todo{figure 4, mention that some participants act consistently with $k > 1$}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=6cm]{geom-k-p}
+    \caption{Distribution of parameter $p$ for Geometric distribution over $k$. Each point is the model fit for one participant. The Geometric models over $k$ and $d$ were compared to determine the color of each point.}
+\end{figure}
 
 
 \section{Discussion}
