@@ -71,6 +71,10 @@ At the abstract level, the agent dynamically constructs composite goals (or \tex
 We begin the paper by discussing relevant theoretical approaches to planning and problem solving. We then present a formal model of planning with composite \textit{multigoals}. Next, we present an experiment designed to dissociate the predictions of the multigoal model from those of standard depth-limited search and hierarchical planning models. We discuss the application of the general model to the specific problem, and present model fitting results. We conclude with a discussion of \todo{pull from discussion}.
 
 \section{Background}
+Much previous work in psychology has studied the strategies people use to make planning and problem solving tractable. One class of strategies resemble algorithms for \textit{tree search}, in which possible plans are simulated forward and evaluated~\cite{}. For example, rather than consider plans that are arbitrarily long, people can engage in \textit{depth-limited search} that focuses resources on plans that can be taken within a certain time horizon~\cite{MacGregor2001,Keramati2016,Krusche2018}. Alternatively, they may rely on heuristics to guide search~\cite[chap. 5]{Anderson1990} or use local signals of progress to avoid less promising plans without explicitly considering them~\citep{Huys2012}.
+
+Another class of strategies involves \textit{hierarchically decomposing} a problem into a set of sub-problems, and then solving those sub-problems in the right order~\cite{sacerdoti1974planning, botvinick2012hierarchical}. This approach can make decision-making easier by reducing the resources needed to solve a given sub-problem at a particular time~\citep{VanDijk2011, Maisto2015}, however, it also introduces the question of how people identify a good hierarchy in the first place. 
+
 
 \subsection{Search and its limitations}
 
@@ -81,14 +85,12 @@ In complex domains, exhaustive search is computationally intractable; thus searc
 When full search is infeasible and progress cues are limited or unreliable, people may have to impose arbitrary constraints on their search. The simplest such constraint is to put a limit on how far into the future you look. So-called \textit{depth-limited search} has been incorporated into several models of human search \citep{MacGregor2001,Keramati2016,Krusche2018}.
 Under this strategy, the searcher considers all possible action sequences of some length $d$, and chooses the one that gives the best intermediate outcome. How the intermediate outcome is defined depends on the problem domain, and can have substantial effects on the choices that are ultimately made. For planning in reward-maximization problems, this outcome is typically the sum of rewards one receives along this path (perhaps augmented with a learned value of the final state; \citealp{Keramati2016}). In problem solving settings, there are typically no intermediate rewards, and a heuristic estimate of distance to the goal state is used to evaluate partial plans \cite[chap. 5]{Anderson1990}. A good heuristic can reduce or even eliminate the need to look far into the future, resulting in a "hill climbing" strategy. But for more challenging problems, people may require more complex strategies to guide their search.
 
-
 \subsection{Subgoals and hierarchical planning}
 Many of the complex problems that people face in their daily lives can naturally be decomposed into smaller problems. People can take advantage of this structure by setting \textit{subgoals}, intermediate goals (e.g. pick up broccoli) that each contribute to achieving a larger goal (cook dinner) which itself may be part of an even broader goal (avoid starvation). This approach can ultimately make decision-making easier, reducing working memory requirements \citep{VanDijk2011} and/or computational complexity \citep{Maisto2015}. However, it also creates a new problem: How should one choose subgoals that will both accomplish the ultimate goal, and also be relatively easy to solve individually? \textit{Hierarchical planning} is one way to answer this question. 
 
 In hierarchical planning, search occurs at different levels of abstraction~\citep{sacerdoti1974planning}. At the top level, one plans over potential sequences of subgoals to pursue in order to accomplish the ultimate goal. Each subgoal then becomes its own planning problem in which one plans over sequences of actions (or perhaps simpler subgoals) to accomplish that subgoal. Hierarchical planning has been studied as a way in which humans learn to solve complex tasks~\citep{botvinick2012hierarchical} and also as a method for scaling up automated planning systems~\citep{kaelbling2010hierarchical}. Research on hierarchical planning has traditionally focused on learning or planning given a particular decomposition~\citep{sacerdoti1974planning, parr1998reinforcement}, and more recent approaches have examined learning hierarchical planning representations through interaction with an environment or from another agent's demonstrations~\citep{bacon2017option, cobo2014abstraction}. From a functional perspective, hierarchical task decompositions enable adaptive systems to trade off behavioral optimality with computational resources. A key question is then what properties of a decomposition facilitate this tradeoff.
 
-\todo{XXX probably doesn't make sense for right here, needs more intro:} The Sussman anomaly exemplifies a case where acting optimally with respect to individual subgoals renders a problem impossible to complete. This issue can be avoided by changing the structure of subgoals or planning with respect to multiple subgoals. More generally, some efficiencies in problems can only be achieved by planning with respect to multiple subgoals as plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in an extraneous move that is avoided when considering multiple subgoals.
-
+Algorithms for learning policies in hierarchically structured tasks assume that subpolicies are insensitive to the context they're executed in. The assumption that subpolicies are context-free is termed \textit{recursive optimality} \citep{Dietterich2000} and ensures that these subpolicies can flexibly be applied in many contexts. The Sussman anomaly exemplifies a case where acting optimally with respect to individual subgoals renders a problem impossible to complete. This issue can be avoided by changing the structure of subgoals or planning with respect to multiple subgoals. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals as plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
 
 % \todo{This might be too much detail for the background}
 % Our work here can be understood as analyzing \textit{subgoal resolution} as a factor in the construction of hierarchical plans in humans. At a particular moment in time, a person will have a subgoal they want to complete. Compare the subgoal ``mail a letter'' with the subgoal ``mail a letter AND go to the grocery''. The second subgoal has higher \textit{resolution} than the first in that it is more specific and picks out a strictly smaller set of states as acceptable for completion. This factor is a key element for any hierarchical planning scheme. For example, in formalisms such as the options framework~\citep{sutton1999between}, macro-actions (i.e., options) are defined in part by the set of states in which one exits an option. Our approach can be understood then as considering the complexity of the predicates defining a termination condition when people hierarchically decompose a task.
@@ -204,7 +206,7 @@ We fit all models by maxmimum likelihood estimation. For discrete parameters we 
 
 \begin{figure}[t!]
     \centering
-    \includegraphics[width=6cm]{model-fits}
+    \includegraphics[scale=0.5]{model-fits}
     \caption{AIC for model fits. Each point is the model fit across all actions in all problems solved by a single participant.}
 \end{figure}
 
@@ -214,14 +216,15 @@ We fit all models by maxmimum likelihood estimation. For discrete parameters we 
 \toprule
 Model         & \# Parameters & AIC   & LL    & \# Best fit \\
 \midrule
-Geometric k/d & 3 & \textbf{10537} & -5145 & 21 \\
-Poisson k & 2 & 11234 & -5535 & 3 \\
+Geometric k/d & 3 & \textbf{10533} & -5143 & 12 \\
+Poisson k/d & 3 & 10541 & -5147 & 10 \\
+Poisson k & 2 & 11234 & -5535 & 2 \\
 Geometric k & 2 & 11250 & -5543 & 2 \\
 Fixed k/d & 3 & 11518 & -5636 & 0 \\
 Fixed k & 2 & 11705 & -5770 & 0 \\
-Poisson d & 2 & 12368 & -6102 & 7 \\
+Poisson d & 2 & 12364 & -6100 & 7 \\
 k=1 & 1 & 12482 & -6200 & 6 \\
-Geometric d & 2 & 13057 & -6446 & 2 \\
+Geometric d & 2 & 13062 & -6449 & 2 \\
 Fixed d & 2 & 13348 & -6592 & 0 \\
 \bottomrule
 \end{tabular}
@@ -232,13 +235,13 @@ Fixed d & 2 & 13348 & -6592 & 0 \\
  
 Models were fit for each participant, see Figure 3.
 
-Models with distributions over model parameters $k$ and $d$ were generally better fits than those with fixed parameters (Geometric over k AIC 11250.0, Fixed k AIC 11705.7, Geometric over d AIC 13057.7, Fixed d AIC 13348.5), suggesting that people flexibly adapt these limitations on planning.
+Models with distributions over model parameters $k$ and $d$ were generally better fits than those with fixed parameters, suggesting that people flexibly adapt these limitations on planning.
 
-Models with distributions over $k$ (AIC 11250.0) were better fits than models with distributions over $d$ (AIC 12152.8) in 28 out of 41 participants, suggesting that goal-based planning may better explain participant actions than depth limits in this task.
+Models with distributions over $k$ were better fits than models with distributions over $d$ in 28 out of 41 participants, suggesting that goal-based planning may better explain participant actions than depth limits in this task.
 
-Of particular note is that many participants are best explained by a $k=1$ model or Geometric distribution with large $p$ (which acts like the $k=1$ model with probability $p$). The case of $k=1$ amounts to simple hierarchical planning, where search finds optimal paths towards the next incomplete subgoal. It's particularly interesting that the $k=1$ (AIC 12482.7) is a comparable fit to the best depth model (AIC 12152.8) in 27 out of 41 participants, suggesting that in at least this task even very simple goal representations are a strong constraint on search that can explain action comparably to well-established models of search.
+Of particular note is that many participants are best explained by a $k=1$ model or Geometric distribution with large $p$ (which acts like the $k=1$ model with probability $p$). The case of $k=1$ amounts to simple hierarchical planning, where search finds optimal paths towards the next incomplete subgoal. It's particularly interesting that the $k=1$ is a comparable fit to the best depth model in 27 out of 41 participants, suggesting that in at least this task even very simple goal representations are a strong constraint on search that can explain action comparably to well-established models of search.
 
-The joint model with Geometric distributions over $k$ and $d$ is the best fit for 22 out of 41 participants and best overall fit (AIC 10537.6), suggesting that jointly considering these limits is essential to explaining action in our task.
+The joint model with Geometric distributions over $k$ and $d$ is the best fit for 22 out of 41 participants and best overall fit, suggesting that jointly considering these limits is essential to explaining action in our task.
 
 \todo{figure 4, mention that some participants act consistently with $k > 1$}
 
@@ -254,11 +257,11 @@ The joint model with Geometric distributions over $k$ and $d$ is the best fit fo
 
 % \section{Methods}
 % \subsubsection{Stimuli and procedure}
-% The primary modification from Experiment 1 was the introduction of a points system. Participants began each problem with some number of points, which was decremented each time they moved a block. The initial points for each problem was set to the 95\% quantile of the number moves taken on that problem in Experiment 1. After solving each problem, the leftover points were added to a running total. At the end of the experiment, participants were given bonus payments equal to one cent per point. The critical manipulation was to increase the stakes of certain problems, multiplying both the initial point count and the cost-per-move by three. To maximize statistical power, we duplicated each problem from Experiment 1, presenting it once as a low-stakes problem and again as a high-stakes problem. To reduce the probability of participants noticing the duplicates, we swapped the left and right columns of the initial state, a manipulation that changes the visual appearance without altering the abstract structure of the problem. This procedure revealed that two of the problems selected for Experiment 1 were already mirrored duplicates of another problem. We replaced these two problems with new problems, and set conservatively set the number initial points to the largest of the other problems.
+% The primary modification from Experiment 1 was the introduction of a points system. Participants began each problem with some number of points, which was decremented each time they moved a block. The initial points for each problem was set to the 95\% quantile of the number moves taken on that problem in Experiment 1. After solving each problem, the leftover points were added to a running total. At the end of the experiment, participants were given bonus payments equal to one cent per point. The critical manipulation was to increase the stakes of certain problems, multiplying both the initial point count and the cost-per-move by three. To maximize statistical power, we duplicated each problem from Experiment 1, presenting it once as a low-stakes problem and again as a high-stakes problem. To reduce the probability of participants noticing the duplicates, we swapped the left and right columns of the initial state, a manipulation that changes the visual appearance without altering the abstract structure of the problem. This procedure revealed that two of the problems selected for Experiment 1 were already mirrored duplicates of another problem. We replaced these two problems with new problems, and conservatively set the number of initial points to the largest of the other problems.
 
 
 % \subsubsection{Participants}
-% We recruited \MISSING participants from Amazon Mechanical Turk. Each participant received \$0.50 for completing the task, plus a performance-dependent bonus (mean: \MISSING). The task took an average of \MISSING minutes.
+% We recruited 40 participants from Amazon Mechanical Turk. Each participant received \$0.50 for completing the task, plus a performance-dependent bonus (mean: \$3.18). The task took an average of \MISSING minutes.
 
 % \subsection{Results}
 % \todo{}
