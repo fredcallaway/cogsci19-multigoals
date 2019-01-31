@@ -104,17 +104,16 @@ In hierarchical planning, search occurs at different levels of abstraction~\cite
 Multigoals extend a standard goal-based hierarchical planning algorithm by allowing for new subgoals to be constructed on the fly by composing existing, primitive subgoals. Formally, we define a multigoal,  $\multigoal$, as a set of primitive subgoals. Following the options framework \citep{sutton1999between}, a subgoal $g$ is defined by a function 
 $\beta_g: \mathcal{S} \rightarrow \{0, 1\}$
 that indicates whether a state satisfies the given subgoal. A multigoal is satisfied by a state that satisfies all of its component subgoals; thus, a multigoal's satisfaction function is defined
-$\beta_{\multigoal}(s) = \prod_{g \in \multigoal} \beta_g(s)$. Although multigoals can be integrated into arbitrarily deep hierarchical planning models for stochastic environments, we focus on the simplest case of a two-level hierarchy and a deterministic environment. At the abstract-level the agent chooses a multigoal based on the current state and high-level goal. At the concrete-level, the agent attempts to find a sequence of actions that satisfies the current multigoal.
+$\beta_{\multigoal}(s) = \prod_{g \in \multigoal} \beta_g(s)$. Although multigoals can be integrated into arbitrarily deep hierarchical planning models for stochastic environments, we focus on the simplest case of a two-level hierarchy and deterministic environments. At the abstract-level the agent chooses a multigoal based on the current state and high-level goal. At the concrete-level, the agent attempts to find a sequence of actions that satisfies the current multigoal.
 
-A full model of abstract-level planning would both identify possible subgoals and also choose which ones to pursue at each step. However, to simplify the problem, we assume that the goals and their ordering are given. That is, the agent receives an ordered set of subgoals $\{ g_1, g_2, \dots g_n  \}$ such that completing all $n$ subgoals in order amounts to solving the ultimate goal. The abstract-level phase of planning is thus reduced to selecting a number of subgoals to pursue; we call this number $k$. Given a selection of $k$ and the multigoal in a given state, $\multigoal(s; k)$ is simply the set of the next $k$ incomplete subgoals. For example, if $g_1$ has been completed ($\beta_{g_1}(s) = 1)$ and $k=2$, we would have $\multigoal(s; k=2) = \{ g_2, g_3 \}$.
-\red{Is this a good idea? $\rightarrow$ } Admittedly, this simplifying assumption eliminates a considerable amount of interesting complexity. However, it allows us to look for experimental evidence for multigoals without tackling the full problem of multigoal selection. Relaxing this assumption is an important direction for future work.
+A full model of abstract-level planning would both identify possible subgoals and also choose which ones to pursue at each step. However, to simplify the problem, we assume that the goals and their ordering are given. That is, the agent receives an ordered set of subgoals $\{ g_1, g_2, \dots g_n  \}$ such that completing all $n$ subgoals in order amounts to solving the ultimate goal. The abstract-level phase of planning is thus reduced to selecting a number of subgoals to pursue; we call this number $k$. Given a selection of $k$ and the multigoal in a given state, $\multigoal(s; k)$ is simply the set of the next $k$ incomplete subgoals. For example, if $g_1$ has been completed ($\beta_{g_1}(s) = 1)$ and $k=2$, we would have $\multigoal(s; k=2) = \{ g_2, g_3 \}$. \red{Admittedly, this simplifying assumption eliminates a considerable amount of interesting complexity. However, it allows us to look for experimental evidence for multigoals without tackling the full problem of multigoal selection. Relaxing this assumption is an important direction for future work.}
 
 % \begin{equation}
 %   \multigoal(s; k) = \{g_i \dots g_{i+k-1} \} \text{ s.t. } 
 %     \beta_{g_{i-1}}(s) = 1 \wedge \beta_{g_i}(s) = 0
 % \end{equation}
 
-Given a multigoal $\multigoal$, concrete-level of planning uses tree search to find a lowest-cost path $\pi$ that satisfy all subgoals in $\multigoal$. This search process may be depth-limited. If no path of length $d$ or less can be found that satisfies all the subgoals, the model chooses a path that satisfies the is chosen when multiple paths are found. Thus, the action sequence is chosen by
+Given a multigoal $\multigoal$, concrete-level planning uses tree search to find a lowest-cost path $\pi$ that satisfy all subgoals in $\multigoal$. This search process may be depth-limited. If no path of length $d$ or less can be found that satisfies all the subgoals, the model chooses a path that satisfies the largest possible number of subgoals. Thus, the action sequence is chosen by
 %
 \begin{equation}\label{eq:concrete}
   \arg\max_\pi 
@@ -160,13 +159,13 @@ We recruited 41 participants from Amazon Mechanical Turk. Each participant recei
 
 \subsection{Model}
  
-According to the proposed multigoal model, people can select multiple subgoals to pursue concurrently, attempting to creating a plan that satisfies all $k$ subgoals in the fewest steps. In the experimental task, we define a subgoal as putting a block in its correct final position. Thus, we have an ordered set of subgoals $\{ g_F, g_E, g_D, g_C, g_B, g_A \}$ such that completing them in order necessarily solves the full problem. This satisfies the simplifying assumption required by the model, and \red{it is not unreasonable to assume that such a subgoal structure is apparent to the experimental participants.}
+According to the proposed multigoal model, people can select multiple subgoals to pursue concurrently, attempting to create a plan that satisfies all $k$ subgoals in the fewest steps. In the experimental task, we define a subgoal as putting a block in its correct final position. Thus, we have an ordered set of subgoals $\{ g_F, g_E, g_D, g_C, g_B, g_A \}$ such that completing them in order necessarily solves the full problem. This satisfies the simplifying assumption required by the model, and \red{it is not unreasonable to assume that such a subgoal structure is apparent to the experimental participants.}
 
 
 \newcommand{\A}{\mathcal{A}}
 \newcommand{\U}{\mathcal{U}}
 
-We now discuss how to derive a likelihood to use for model fitting and comparison. Given a state and a value for $k$, we select a multigoal $\multigoal(s; k)$ which is the set of the next $k$ uncompleted subgoals. Then, given this multigoal and a value for $d$, we find a set of optimal paths given by Equation~\ref{eq:concrete}. In the case of ties, it is not obvious how to determine which path should be chosen because the probability of finding a given path depends on the specific search algorithm one uses, a detail we remain agnostic about. Thus the model simply divides probability uniformly among the set of unique first actions in any of the identified paths. Call this set $\A^*(s; k, d)$, which is a subset of all allowable actions $\A(s)$. We can now define the likelihood of taking a single action in a given state as
+We now derive a likelihood to use for model fitting and comparison. Given a state and a value for $k$, the model selects a multigoal $\multigoal(s; k)$ which is the set of the next $k$ uncompleted subgoals. Then, given this multigoal and a value for $d$, we find a set of optimal paths given by Equation~\ref{eq:concrete}. In the case of ties, it is not obvious how to determine which path should be chosen because the probability of finding a given path depends on the specific search algorithm one uses, a detail we remain agnostic about. Thus the model simply divides probability uniformly among the set of unique first actions in any of the identified paths. Call this set $\A^*(s; k, d)$, which is a subset of all allowable actions $\A(s)$. We can now define the likelihood of taking a single action in a given state as
 %
 \begin{equation}\label{likelihood-fixed}
   \Pr(a \mid s; k, d, \epsilon) = 
@@ -174,19 +173,31 @@ We now discuss how to derive a likelihood to use for model fitting and compariso
   \epsilon \cdot \U(a \mid \A(s)),
 \end{equation}
 %
-where $\U$ is the Uniform distribution.
+where $\U$ is the Uniform distribution. Note that by defining the likelihood for each action independently, we implicitly assume that participants re-plan at every step. Relaxing this assumption complicates model-fitting considerably, but it is an important direction for future work.
 
 To test the multigoal model, in particular to evaluate whether people show evidence of pursuing more than one goal at a time, we employ formal model comparison. The comparisons of greatest interest are special cases of the full model. A standard depth-limited search model sets $k=\infty$ and has $d$ (the search depth) as a free parameter. A standard hierarchical planning or subgoaling model sets $k=1$, allowing for only one subgoal to be pursued at a time, and also has $d$ as a free parameter. In the full model, both $k$ and $d$ are free.
 
-We consider two hypotheses for how $k$ and $d$ are chosen when they are free parameters. The first hypothesis is that the parameter is fixed for each individual. For example, one person might always consider two subgoals at a time ($k=2$)  and search fourteen steps into the future ($d=14$). The second hypothesis is that $k$ and $d$ vary from decision to decision, but follow some distribution that is particular to each individual. For example, one person might typically consider one subgoal at a time but occasionally pursue two (or rarely, three) subgoals at a time. We consider \red{two possible distributions}: the Geometric distribution and the Poisson distribution. Because these distribution both have a single parameter, introducing a distribution over $k$ and $d$ does not increase the number of parameters in the model. For inference, we integrate out the latent $k$ and $d$ parameters, which requires enumerating each parameter up to the value at which it results in optimal decision making (all greater values give the same prediction of optimal choices). Thus, for the models that put distributions over $k$ and/or $d$ with parameters $\theta_k$ and $\theta_d$ we have
+We consider two hypotheses for how $k$ and $d$ are chosen when they are free parameters. The first hypothesis is that the parameter is fixed for each individual. For example, one person might always consider two subgoals at a time ($k=2$)  and search fourteen steps into the future ($d=14$). The second hypothesis is that $k$ and $d$ vary from decision to decision, but follow some distribution that is particular to each individual. For example, one person might typically consider one subgoal at a time but occasionally pursue two (or rarely, three) subgoals at a time. We consider \red{two possible distributions for both $k$ and $d$}: the Geometric distribution and the Poisson distribution. Because these distribution both have a single parameter, introducing distributions over $k$ and $d$ does not increase the number of parameters in the model. To compute the likelihood, we integrate out the latent $k$ and $d$ parameters, which requires enumerating each parameter up to the value at which it results in optimal decision making (all greater values give the same prediction of optimal choices). Thus, for the models that put distributions over $k$ and/or $d$ with parameters $\theta_k$ and $\theta_d$ we have
+%
+% \begin{equation}\label{likelihood-dist}
+% \begin{aligned}
+%   \Pr(a \mid s; \theta_k, \theta_d, \epsilon) = 
+%     \sum_{d=1}^{d^*}\sum_{k=1}^{k^*} 
+%       \Pr(a \mid s; k, d, \epsilon) \Pr(k ; \theta_k) \Pr(d ; \theta_d) \\
+%       + \Pr(a | s; k=\intfy, d=\infty, \epsilon)
+%         \Pr(K > k^*; \theta_k) \Pr(D > d^*; \theta_d)
+% .
+% \end{aligned}
+% \end{equation}
 %
 \begin{equation}\label{likelihood-dist}
   \Pr(a \mid s; \theta_k, \theta_d, \epsilon) = 
-    \sum_{d=1}^{d^*}\sum_{k=1}^{k^*} 
-      \Pr(a \mid s; k, d, \epsilon) \Pr(k ; \theta_k) \Pr(d ; \theta_d).
+    \sum_d \sum_k
+      \Pr(a \mid s; k, d, \epsilon) \Pr(k ; \theta_k) \Pr(d ; \theta_d) \\
+.
 \end{equation}
 
-We fit all models by maxmimum likelihood estimation. For discrete parameters we used grid search, considering all possible values of $k \in \{ 1 \dots 6 \}$ and values of $d \in \{1 \dots \MISSING \}$. For continuous parameters, we used \red{some convex optimizer} with \MISSING random initializations to mitigate the possibility of finding local minima.
+We fit all models by maxmimum likelihood estimation. For discrete parameters we used grid search, considering all possible values of $k \in \{ 1 \dots 6 \}$ and values of $d \in \{1 \dots \MISSING \}$. For continuous parameters, we used \red{some convex optimizer} with \MISSING random initializations to mitigate the risk of finding local minima.
 
 
 \subsection{Results}
@@ -238,8 +249,22 @@ The joint model with Geometric distributions over $k$ and $d$ is the best fit fo
 \end{figure}
 
 
+\section{Experiment 2: Incentives modulate multigoal complexity}
+In Experiment 1, participants were incentivized to find short solutions only to the extent that it allowed them to complete the experiment more quickly. Because executing moves is very fast in this task, the benefit of considering multiple goals (and thus finding shorter solutions) was not great, perhaps outweighed by the cognitive effort associated with more complex multigoals. To explore whether people may adapt the size of their multigoals in response to increasing pressure to solve problems efficiently, we conducted a second experiment in which participants were moetarily incentivized to take as few moves as possible on each problem.
+
+\section{Methods}
+\subsubsection{Stimuli and procedure}
+The primary modification from Experiment 1 was the introduction of a points system. Participants began each problem with some number of points, which was decremented each time they moved a block. The initial points for each problem was set to the 95\% quantile of the number moves taken on that problem in Experiment 1. After solving each problem, the leftover points were added to a running total. At the end of the experiment, participants were given bonus payments equal to one cent per point. The critical manipulation was to increase the stakes of certain problems, multiplying both the initial point count and the cost-per-move by three. To maximize statistical power, we duplicated each problem from Experiment 1, presenting it once as a low-stakes problem and again as a high-stakes problem. To reduce the probability of participants noticing the duplicates, we swapped the left and right columns of the initial state, a manipulation that changes the visual appearance without altering the abstract structure of the problem. This procedure revealed that two of the problems selected for Experiment 1 were already mirrored duplicates of another problem. We replaced these two problems with new problems, and set conservatively set the number initial points to the largest of the other problems.
+
+
+\subsubsection{Participants}
+We recruited \MISSING participants from Amazon Mechanical Turk. Each participant received \$0.50 for completing the task, plus a performance-dependent bonus (mean: \MISSING). The task took an average of \MISSING minutes.
+
+\subsection{Results}
+\todo{}
+
 \section{Discussion}
-Why does this matter? What are next steps?
+
 
 
 \bibliographystyle{apacite}
