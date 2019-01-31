@@ -35,7 +35,7 @@
 
 \newcommand{\todo}[1]{\textcolor{red}{\textsc{[TODO: #1]}}}
 \newcommand{\red}[1]{\textcolor{red}{#1}}
-
+\newcommand{\MISSING}{\red{XX}}
 
 \author{TODO}
 
@@ -90,7 +90,7 @@ In hierarchical planning, search occurs at different levels of abstraction~\cite
 
 \begin{figure*}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{example-4-block}
+    \includegraphics[width=0.9\textwidth]{example-4-block.png}
     \caption{Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied. \todo{make eps version with matplotlib}}
 \end{figure*}
 
@@ -106,7 +106,7 @@ $\beta_g: \mathcal{S} \rightarrow \{0, 1\}$
 that indicates whether a state satisfies the given subgoal. A multigoal is satisfied by a state that satisfies all of its component subgoals; thus, a multigoal's satisfaction function is defined
 $\beta_{\multigoal}(s) = \prod_{g \in \multigoal} \beta_g(s)$. Although multigoals can be integrated into arbitrarily deep hierarchical planning models for stochastic environments, we focus on the simplest case of a two-level hierarchy and a deterministic environment. At the abstract-level the agent chooses a multigoal based on the current state and high-level goal. At the concrete-level, the agent attempts to find a sequence of actions that satisfies the current multigoal.
 
-A full model of abstract-level planning would both identify possible subgoals and also choose which ones to pursue at each step. However, to simplify the problem, we assume that the goals and their ordering are given. That is, the agent receives an ordered set of subgoals $\{ g_1, g_2, \cdots g_n  \}$ such that completing all $n$ subgoals in order amounts to solving the ultimate goal. The abstract-level phase of planning is thus reduced to selecting a number of subgoals to pursue; we call this number $k$. Given a selection of $k$ and the multigoal in a given state, $\multigoal(s; k)$ is simply the set of the next $k$ incomplete subgoals. For example, if $g_1$ has been completed (\beta_{g_1}(s) = 1) and $k=2$, we would have $\multigoal(s; k=2) = \{ g_2, g_3 \}$.
+A full model of abstract-level planning would both identify possible subgoals and also choose which ones to pursue at each step. However, to simplify the problem, we assume that the goals and their ordering are given. That is, the agent receives an ordered set of subgoals $\{ g_1, g_2, \dots g_n  \}$ such that completing all $n$ subgoals in order amounts to solving the ultimate goal. The abstract-level phase of planning is thus reduced to selecting a number of subgoals to pursue; we call this number $k$. Given a selection of $k$ and the multigoal in a given state, $\multigoal(s; k)$ is simply the set of the next $k$ incomplete subgoals. For example, if $g_1$ has been completed ($\beta_{g_1}(s) = 1)$ and $k=2$, we would have $\multigoal(s; k=2) = \{ g_2, g_3 \}$.
 \red{Is this a good idea? $\rightarrow$ } Admittedly, this simplifying assumption eliminates a considerable amount of interesting complexity. However, it allows us to look for experimental evidence for multigoals without tackling the full problem of multigoal selection. Relaxing this assumption is an important direction for future work.
 
 % \begin{equation}
@@ -115,13 +115,14 @@ A full model of abstract-level planning would both identify possible subgoals an
 % \end{equation}
 
 Given a multigoal $\multigoal$, concrete-level of planning uses tree search to find a lowest-cost path $\pi$ that satisfy all subgoals in $\multigoal$. This search process may be depth-limited. If no path of length $d$ or less can be found that satisfies all the subgoals, the model chooses a path that satisfies the is chosen when multiple paths are found. Thus, the action sequence is chosen by
-
+%
 \begin{equation}\label{eq:concrete}
   \arg\max_\pi 
     \sum_{g \in \multigoal} \beta_g(s_\pi) - \lambda |\pi |
+    \; \text{ s.t.  } |\pi| \leq d,
 \end{equation}
-
-where $s_\pi$ is the final state on the path defined by the action sequence $\pi$ and $\lambda$ is a very small positive constant (with the effect that $\pi$ is chosen to maximize the first term, using the second term as a tie-breaker).
+%
+where $s_\pi$ is the final state on the path defined by the action sequence $\pi$ and $\lambda$ is a very small positive constant, with the effect that $\pi$ is chosen to maximize the first term (number of subgoals completed), using the second term (path length) as a tie-breaker.
 
 There are several special cases of the model worth highlighting. When $k = 1$, we recover a standard hierarchical planning algorithm in which only one subgoal is pursued at a time. When $k = \infty$, we recover a standard depth-limited search model with a heuristic cost function defined by the number of incomplete subgoals. When $d = \infty$, the model optimally achieves each multigoal, but may still perform suboptimally because future subgoals are not considered. And when $d = k = \infty$, the model always makes optimal choices.
 
@@ -146,11 +147,11 @@ Prior work \citep{Simon1975} has established various strategies people might use
 
 In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the other or goal stack (Fig. 2). Only the top block of a stack can be moved, and the board is limited to contain at most three spaces (columns) for stacks. In all trials, the goal stack contains the same blocks arranged in alphabetical order in the middle space. 
 
-Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of model fits between simulated agents with limits on goal representation ($k < XXX$) and depth-limited agents ($d < XXX$) when fit to trials simulated by agents with limits on goal representation.
+Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of model fits between simulated agents with limits on goal representation ($k < \MISSING$) and depth-limited agents ($d < \MISSING$) when fit to trials simulated by agents with limits on goal representation.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=6cm]{example-block-world}
+    \includegraphics[width=6cm]{example-block-world.png}
     \caption{Interface for each trial. On the left is the initial state which must be rearranged to match the goal state at right.}
 \end{figure}
 
@@ -158,55 +159,34 @@ Participants completed three tutorial trials of increasing difficulty (a 3-block
 We recruited 41 participants from Amazon Mechanical Turk. Each participant received \$2 for completing the task, which took an average of 9 minutes.
 
 \subsection{Model}
-
-\todo{In this section, we describe how we apply our model to this specific task. We also talk about why we just infer k rather than predicting it.}
-
+ 
 According to the proposed multigoal model, people can select multiple subgoals to pursue concurrently, attempting to creating a plan that satisfies all $k$ subgoals in the fewest steps. In the experimental task, we define a subgoal as putting a block in its correct final position. Thus, we have an ordered set of subgoals $\{ g_F, g_E, g_D, g_C, g_B, g_A \}$ such that completing them in order necessarily solves the full problem. This satisfies the simplifying assumption required by the model, and \red{it is not unreasonable to assume that such a subgoal structure is apparent to the experimental participants.}
 
-We derive a likelihood function based on Equation~\ref{eq:concrete}. 
 
-We now discuss how to derive a likelihood to use for model fitting and comparison. Conditional on a given multigoal and state, we can compute the probability of any action based on Equation~\ref{eq:concrete} as
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\U}{\mathcal{U}}
 
-\begin{equation}
-\Pr(a \mid s) = (1 - \epsilon) \cdot \Pr(a \mid s) + \epsilon \cdot \mathcal{U}(a \mid A_s)
+We now discuss how to derive a likelihood to use for model fitting and comparison. Given a state and a value for $k$, we select a multigoal $\multigoal(s; k)$ which is the set of the next $k$ uncompleted subgoals. Then, given this multigoal and a value for $d$, we find a set of optimal paths given by Equation~\ref{eq:concrete}. In the case of ties, it is not obvious how to determine which path should be chosen because the probability of finding a given path depends on the specific search algorithm one uses, a detail we remain agnostic about. Thus the model simply divides probability uniformly among the set of unique first actions in any of the identified paths. Call this set $\A^*(s; k, d)$, which is a subset of all allowable actions $\A(s)$. We can now define the likelihood of taking a single action in a given state as
+%
+\begin{equation}\label{likelihood-fixed}
+  \Pr(a \mid s; k, d, \epsilon) = 
+  (1 - \epsilon) \cdot \U(a \mid \A^*(s; k, d)) + 
+  \epsilon \cdot \U(a \mid \A(s)),
 \end{equation}
-Let $A_s$ be the set of first actions of optimal paths given by this equation. 
+%
+where $\U$ is the Uniform distribution.
 
 To test the multigoal model, in particular to evaluate whether people show evidence of pursuing more than one goal at a time, we employ formal model comparison. The comparisons of greatest interest are special cases of the full model. A standard depth-limited search model sets $k=\infty$ and has $d$ (the search depth) as a free parameter. A standard hierarchical planning or subgoaling model sets $k=1$, allowing for only one subgoal to be pursued at a time, and also has $d$ as a free parameter. In the full model, both $k$ and $d$ are free.
 
-We consider two hypotheses for how $k$ and $d$ are chosen when they are free parameters. The first hypothesis is that the parameter is fixed for each individual. For example, one person might always consider two subgoals at a time ($k=2$)  and search fourteen steps into the future ($d=14$). The second hypothesis is that $k$ and $d$ vary from decision to decision, but follow some distribution that is particular to each individual. For example, one person might typically consider one subgoal at a time but occasionally pursue two (or rarely, three) subgoals at a time. We consider \red{two possible distributions}: the Geometric distribution and the Poisson distribution. Because these distribution both have a single parameter, introducing a distribution over $k$ and $d$ does not increase the number of parameters in the model. For inference, we integrate out the latent $k$ and $d$ parameters, which requires enumerating each parameter up to the value at which it results in optimal decision making (all greater values give the same prediction of optimal choices).
+We consider two hypotheses for how $k$ and $d$ are chosen when they are free parameters. The first hypothesis is that the parameter is fixed for each individual. For example, one person might always consider two subgoals at a time ($k=2$)  and search fourteen steps into the future ($d=14$). The second hypothesis is that $k$ and $d$ vary from decision to decision, but follow some distribution that is particular to each individual. For example, one person might typically consider one subgoal at a time but occasionally pursue two (or rarely, three) subgoals at a time. We consider \red{two possible distributions}: the Geometric distribution and the Poisson distribution. Because these distribution both have a single parameter, introducing a distribution over $k$ and $d$ does not increase the number of parameters in the model. For inference, we integrate out the latent $k$ and $d$ parameters, which requires enumerating each parameter up to the value at which it results in optimal decision making (all greater values give the same prediction of optimal choices). Thus, for the models that put distributions over $k$ and/or $d$ with parameters $\theta_k$ and $\theta_d$ we have
+%
+\begin{equation}\label{likelihood-dist}
+  \Pr(a \mid s; \theta_k, \theta_d, \epsilon) = 
+    \sum_{d=1}^{d^*}\sum_{k=1}^{k^*} 
+      \Pr(a \mid s; k, d, \epsilon) \Pr(k ; \theta_k) \Pr(d ; \theta_d).
+\end{equation}
 
-Finally, to account for participant errors that cannot be well-explained by the model, we introduce an additional parameter, $\epsilon$ which is the probability that a participant chooses a given move randomly.
-
-Since participants may take an action $a$ at a state $s$ that is not predicted by the model
-
-$$
-\Pr(a \mid s) = (1 - \epsilon) \cdot \Pr_t(a \mid s) + \epsilon \cdot \mathcal{U}(a \mid A_s)
-$$
-
-
-\subsection{Fixed-k model}
-
-Models were fit for each participant, with the parameters $\epsilon$ and $k$ fit by Maximum Likelihood Estimation of the joint probability of all actions, where $k$ was varied from 1 to the total number of goals, which is the number of blocks.
-
-\subsection{Fixed-depth model}
-
-Models were fit for each participant, with the parameters $\epsilon$ and $d$ fit by Maximum Likelihood Estimation of the joint probability of all actions, where $d$ was varied from 1 to 13 \todo{}.
-
-\subsection{Geometric-k model}
-
-To fit flexible modulation of $k$ by a participant, we test a model where $k$ is drawn from a Geometric distribution with parameter $p$ as follows
-
-$$
-\Pr_t(a \mid s, p) = \sum_k \Pr(a \mid s, k) \text{Geom}(k; p)
-$$
-
-Models were fit for each participant, with the parameters $\epsilon$ and $p$ fit by Maximum Likelihood Estimation of the joint probability of all actions. \todo{note summing tail $k >= max_k$?} 
-
-\todo{Geometric-d OR Binomial-d OR Joint k/d}
-
-
-% START RESULTS
+We fit all models by maxmimum likelihood estimation. For discrete parameters we used grid search, considering all possible values of $k \in \{ 1 \dots 6 \}$ and values of $d \in \{1 \dots \MISSING \}$. For continuous parameters, we used \red{some convex optimizer} with \MISSING random initializations to mitigate the possibility of finding local minima.
 
 
 \subsection{Results}
@@ -221,7 +201,7 @@ Models were fit for each participant, with the parameters $\epsilon$ and $p$ fit
 \centering
 \begin{tabular}{lrrrr}
 \toprule
-Model         & \# Parameters & AIC   & LL    & \# Participants \\
+Model         & \# Parameters & AIC   & LL    & \# Best fit \\
 \midrule
 Geometric k/d & 3 & \textbf{10537} & -5145 & 21 \\
 Poisson k & 2 & 11234 & -5535 & 3 \\
