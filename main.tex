@@ -146,7 +146,7 @@ To test the predictions of the multigoal model, we conducted a Tower of London (
 
 In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the other or goal stack (Fig. 2). Only the top block of a stack can be moved, and the board is limited to contain at most three spaces (columns) for stacks. In all trials, the goal stack contains the same blocks arranged in alphabetical order in the middle space. 
 
-Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to \red{maximize the difference in likelihood of model fits between simulated agents with limits on goal representation ($k < \MISSING$) and depth-limited agents ($d < \MISSING$) when fit to trials simulated by agents with limits on goal representation.}
+Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of the fixed-$k$multigoal model (Equation~\ref{eq:likelihood-fixed}) and the limited depth model on data simulated from multigoal agents with $k \in \{ 1,2,3,4 \}$.
 
 \begin{figure}[ht]
     \centering
@@ -167,7 +167,7 @@ According to the proposed multigoal model, people can select multiple subgoals t
 
 We now derive a likelihood to use for model fitting and comparison. Given a state and a value for $k$, the model selects a multigoal $\multigoal(s; k)$ which is the set of the next $k$ uncompleted subgoals. Then, given this multigoal and a value for $d$, we find a set of optimal paths given by Equation~\ref{eq:concrete}. In the case of ties, it is not obvious how to determine which path should be chosen because the probability of finding a given path depends on the specific search algorithm one uses, a detail we remain agnostic about. Thus the model simply divides probability uniformly among the set of unique first actions in any of the identified paths. Call this set $\A^*(s; k, d)$, which is a subset of all allowable actions $\A(s)$. We can now define the likelihood of taking a single action in a given state as
 %
-\begin{equation}\label{likelihood-fixed}
+\begin{equation}\label{eq:likelihood-fixed}
   \Pr(a \mid s; k, d, \epsilon) = 
   (1 - \epsilon) \cdot \U(a \mid \A^*(s; k, d)) + 
   \epsilon \cdot \U(a \mid \A(s)),
@@ -190,7 +190,7 @@ We consider two hypotheses for how $k$ and $d$ are chosen when they are free par
 % \end{aligned}
 % \end{equation}
 %
-\begin{equation}\label{likelihood-dist}
+\begin{equation}\label{eq:likelihood-dist}
   \Pr(a \mid s; \theta_k, \theta_d, \epsilon) = 
     \sum_d \sum_k
       \Pr(a \mid s; k, d, \epsilon) \Pr(k ; \theta_k) \Pr(d ; \theta_d) \\
@@ -264,14 +264,17 @@ The joint model with Geometric distributions over $k$ and $d$ is the best fit fo
 % \todo{}
 
 \section{Discussion}
-first paragraph reminds people of big problem, summarizes result.
+  
+To solve complex problems, people have to break them down into smaller problems. The importance of subgoals has been long recognized, and they play a critical role in the most successful models of human problem solving \citep{anderson2013architecture,NewellSimon1972,laird1987soar}. However, these models are limited by the assumption that only one subgoal can be pursued at a time. To address this limitation, we have extended the classic subgoaling model with the notion of a multigoal, a subset of subgoals that is pursued concurrently. Through a formal model comparison, we showed that the multigoal model explains data better than a standard one-at-a-time subgoal model or a model that ignores subgoal structure alltogether.
 
-To solve complex problems, people have to break them down into smaller problems. The importance of subgoals has been long recognized, and they play a critical role in the most successful models of human problem solving \citep{anderson2013architecture,NewellSimon1972,laird1987soar}. However, these models are limited by the assumption that only one subgoal can be active at a time
+We have presented a theory of how one might represent and pursue multiple concurrent subgoals, and we have provided preliminary evidence that people actually do this. However, we don't have a theory of how they select which subgoals to pursue at any moment. Thus, in the context of the experiment, we treat $k$ as a latent variable to be inferred, not predicted. A more complete model would explain why people choose the $k$ they do, perhaps as a function of problem complexity or stakes. Such a theory could be constructed within the framework of resource-rational analysis \citep{Griffiths2014}, predicting that people choose a $k$ to optimize a tradeoff between the efficiency of the problem solution and the cost of representing and pursuing more complex multigoals. An important open question is how to quantify the cost of a multigoal, or even a standard subgoal.
 
-use rest of discussion to discuss limitations of analysis & directions for future work
-implications, you can come back to and say by showing this, we gain this new insight, it's relevant here and here
+Another major direction for future work is to remove the simplifying assumption of subgoal-ordering. This assumption allows us to reduce the problem of composing multigoals from a set of subgoals to the problem of selecting a single integer $k$, greatly simplifying model specification and inference. However many of the problems people are faced with do not have such an assumed ordering. To return to the initial motivating example, you do not know a priori whether you should go to a grocery store or library first. Unfortunately, choosing a multigoal from an unordered set of subgoals is a daunting task. With $n$ basic subgoals, there are $\binom{n}{k}$ possible multigoals of size $k$ that you could construct. But fortunately, as Colton demonstrates when he hands out roses at the end of each episode, people are entirely of capable of choosing $k$ out of $n$ options.
 
-rule: if you start with colorful example, you have to return in the final sentence.
+% In the general case with $n$ subgoals, there are $2^n$ possible multigoals. At a practical level, this poses a substantial challenge for infering which multigoal is guiding someone's behavior at any moment. But it also raises a theoretical question: How can people effectively choose multigoals when there are so many options? Addressing this question will be a challenging, but critical direction for future work.
+
+
+
 
 \bibliographystyle{apacite}
 \setlength{\bibleftmargin}{.125in}
