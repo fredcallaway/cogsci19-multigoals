@@ -265,7 +265,7 @@ We fit all models by maxmimum likelihood estimation. For discrete parameters we 
   \label{tab:model-fits}
 \end{table}
 
-We fit the parameters of each model separately for each participant. Results are summarized in Figure~\ref{fig:model-fits} and Table~\ref{tab:model-fits}. We highlight three primary results below.
+We fit the parameters of each model separately for each participant. Results are summarized in Figure~\ref{fig:model-fits} and Table~\ref{tab:model-fits}. We highlight four primary results below.
 
 First, all models that include multigoals (the first six rows in the table) explain the data significantly better than the $k=1$ model. This suggests that people are not limited to pursuing one subgoal at a time. That being said, for some participants, the best fitting $p_k$ parameter in the Geometric $k/d$ model was close to one, resulting in single subgoal planning in most cases (See Figure~\ref{fig:p_k}). In particular $p_k$ was greater than 0.95 for 17 out of 41 participants, suggesting that these participants considered more than one subgoal at most 5\% of the time.
 
@@ -274,6 +274,8 @@ First, all models that include multigoals (the first six rows in the table) expl
 Second, all models with free $k$ parameters performed better than the models with free $d$ parameters. This suggests that limits on composite subgoal representations provide a better explanation for participants' behavior than limits on the depth of search. However, models that include both kinds of limits perform best. This suggests that human problem solving may be jointly constrained by subgoal representations and search depth, and that these two constraints each provide unique contributions to explaining behavior.
 
 Third, models with distributions over model parameters $k$ and $d$ always performed better than the corresponding models with fixed parameters. This suggests that people consider different numbers of subgoals and search to different depths at different points. This effect could be due to changing problem. The configuration of blocks at any moment may determine, for example, the number of subgoals a person is capable of considering. An alternative (although not mutually exclusive) explanation is that our participants adaptively adjusted the complexity of their multigoals, choosing how much effort to put into the problem based on an estimate of how much doing so will improve their performance \citep{Shenhav2017,lieder2017strategy}.
+
+Finally, individuals exhibit variability in their strategies as evidenced by count of best fits in Table \ref{tab:model-fits}. As noted above, many participants generally only consider one subgoal at a time. As shown by the bimodal distribution in Figure \ref{fig:p_k}, some participants (on the left) seem to consider a single subgoal at a time, while others (on the right) seem to plan with respect to the full set of subgoals. Nevertheless, 41\% of participants show behavior between these extremes ($0.05 < p_k < 0.95$), something that can only be captured by the multigoal model.
 
 % Under this explanation, we would predict that people will use more complex multigoals when finding an efficient solution is more important. We set out to test this prediction in a second experiment.
 
