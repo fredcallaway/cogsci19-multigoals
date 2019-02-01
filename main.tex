@@ -69,7 +69,6 @@ It's Tuesday afternoon and you have a list of errands to run before you can retu
 
 The ability of people to solve problems such as these has typically been formulated in terms of search over an internal representation of the problem space \citep{NewellSimon1972}. However, the combinatorial explosion of possible action sequences makes exhaustive search intractable, necessitating approximation strategies \citep{Huys2015}. One particularly valuable strategy for directing search is \textit{subgoaling} \citep{Donnarumma2016}. By focusing on a single subgoal at a time, one can ignore irrelevant actions and features of the environment, effectively reducing the dimensionality of the problem space \citep{Dietterich2000}. However, this reduction comes at a cost. Standard models of goal-setting and hierarchical planning assume that subgoals are \textit{context-free} in the sense that they are pursued independently, without consideration of the ultimate goal or future subgoals. As a result, opportunities to make progress towards multiple subgoals at once will be missed. Nevertheless, people often \textit{do} identify these opportunities. This poses a problem for the standard one-at-a-time model of subgoal pursuit.
 
-
 % How can we reconcile the strong evidence for hierarchical structure in human behavior \citep{Cooper2006} with our 
 
 How might people delight in the benefits of hierarchical decomposition, without being shackled by the artificial boundaries it imposes on a problem?
@@ -175,7 +174,7 @@ In each trial, participants are presented with two configurations of stacked blo
 
 Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of the fixed $k$multigoal model (Equation~\ref{eq:likelihood-fixed}) and the depth-limited model on data simulated from multigoal agents with $k \in \{ 1,2,3,4 \}$. That is, the problems were optimized to distinguish the behavioral signature of multigoals from that of constraints on search depth.
 
-\begin{figure}[ht]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=6cm]{example-block-world.png}
     \caption{Experimental interface. On the left is the initial state which must be rearranged to match the goal state at right.}
@@ -219,15 +218,15 @@ We consider two hypotheses for how $k$ and $d$ are chosen when they are free par
 % \end{aligned}
 % \end{equation}
 %
-\red{%
+
 \begin{equation}\label{eq:likelihood-dist}
   \Pr(a \mid s; \theta_k, \theta_d, \epsilon) = 
     \sum_{d=1}^{\infty} \sum_{k=1}^{\infty}
       \Pr(a \mid s; k, d, \epsilon) \Pr(k ; \theta_k) \Pr(d ; \theta_d) \\
 .
 \end{equation}
-Despite the infinite summation, we can compute this value exactly because we need only enumerate each parameter up to the value at which it results in optimal decision making, $\theta^*$. All greater values give the same prediction, thus we can treat them as a single bin with prior probability $\Pr(\theta > \theta^*)$ evaluated at $\theta^*$ and likelihood  $\Pr(a \mid s; \theta^*)$.
-}
+Despite the infinite summation, we can compute this value exactly because we need only enumerate each parameter up to the value at which it results in optimal decision making, $\theta^*$. All greater values give the same prediction, thus we can treat them as a single bin with probability $\Pr(\theta > \theta^*) \Pr(a \mid s; \theta^*)$.
+
 
 We fit all models by maxmimum likelihood estimation. For discrete parameters we used grid search, considering all possible values of $k \in \{ 1 \dots 6 \}$ and values of $d \in \{1 \dots 15 \}$. We chose 15 as this was the farthest a participant ever was from a goal state. For continuous parameters, we used L-BFGS.
 
@@ -280,17 +279,17 @@ Under this explanation, we would predict that people will use more complex multi
 % The joint model with Geometric distributions over $k$ and $d$ is the best fit for 22 out of 41 participants and best overall fit, suggesting that jointly considering these limits is essential to explaining action in our task.
 
 % modulating > modulate. I think it's better to make a strong statement. I don't think it's important to match the "-ing" construction in the Experiment 1 title. -Fred
-\section{Experiment 2: Incentives modulate multigoal complexity}
-In Experiment 1, participants were incentivized to find short solutions only to the extent that it allowed them to complete the experiment more quickly. Because executing moves is very fast in this task, the benefit of considering multiple goals (and thus finding shorter solutions) was not great, perhaps outweighed by the cognitive effort associated with more complex multigoals. To explore whether people may adapt the size of their multigoals in response to increasing pressure to solve problems efficiently, we conducted a second experiment in which participants were incentivized to take as few moves as possible on each problem.
+% \section{Experiment 2: Incentives modulate multigoal complexity}
+% In Experiment 1, participants were incentivized to find short solutions only to the extent that it allowed them to complete the experiment more quickly. Because executing moves is very fast in this task, the benefit of considering multiple goals (and thus finding shorter solutions) was not great, perhaps outweighed by the cognitive effort associated with more complex multigoals. To explore whether people may adapt the size of their multigoals in response to increasing pressure to solve problems efficiently, we conducted a second experiment in which participants were incentivized to take as few moves as possible on each problem.
 
-\section{Methods}
-\subsubsection{Stimuli and procedure}
-The primary modification from Experiment 1 was the introduction of a points system. Participants began half of trials with some number of points, which was decremented each time they moved a block. The initial points for each problem was set to the 95\% quantile of the number moves taken on that problem in Experiment 1. After solving each problem, the leftover points were added to a running total. At the end of the experiment, participants were given bonus payments equal to one cent per point. The other half of trials had no points and no bonus. To maximize statistical power, we duplicated each problem from Experiment 1, presenting it once as a problem with a bonus and again as a problem with no bonus. To reduce the probability of participants noticing the duplicates, we swapped the left and right columns of the initial state, a manipulation that changes the visual appearance without altering the abstract structure of the problem. This procedure revealed that two of the problems selected for Experiment 1 were already mirrored duplicates of another problem. We replaced these two problems with new problems, and conservatively set the number of initial points to the largest of the other problems.
+% \section{Methods}
+% \subsubsection{Stimuli and procedure}
+% The primary modification from Experiment 1 was the introduction of a points system. Participants began half of trials with some number of points, which was decremented each time they moved a block. The initial points for each problem was set to the 95\% quantile of the number moves taken on that problem in Experiment 1. After solving each problem, the leftover points were added to a running total. At the end of the experiment, participants were given bonus payments equal to one cent per point. The other half of trials had no points and no bonus. To maximize statistical power, we duplicated each problem from Experiment 1, presenting it once as a problem with a bonus and again as a problem with no bonus. To reduce the probability of participants noticing the duplicates, we swapped the left and right columns of the initial state, a manipulation that changes the visual appearance without altering the abstract structure of the problem. This procedure revealed that two of the problems selected for Experiment 1 were already mirrored duplicates of another problem. We replaced these two problems with new problems, and conservatively set the number of initial points to the largest of the other problems.
 
-\subsubsection{Participants}
-We recruited 47 participants from Amazon Mechanical Turk. Each participant received \$2.75 for completing the task, plus a performance-dependent bonus (mean: \$0.77). The task took an average of 18 minutes.
+% \subsubsection{Participants}
+% We recruited 47 participants from Amazon Mechanical Turk. Each participant received \$2.75 for completing the task, plus a performance-dependent bonus (mean: \$0.77). The task took an average of 18 minutes.
 
-\subsection{Results}
+% \subsection{Results}
 
 \begin{figure}[ht]
     \centering
@@ -299,13 +298,13 @@ We recruited 47 participants from Amazon Mechanical Turk. Each participant recei
     \label{fig:p_k}
 \end{figure}
 
-Participants in Experiment 2 were able to solve the problems in fewer moves on average compared to participants in Experiment 1 ($p < 1e-5$), although comparing high-stakes trials in Experiment 2 did not result in a meaningful difference compared to low-stakes trials ($p > 0.5$). Additionally, repeated trials in Experiment 2 were not completed in fewer moves on average ($p > 0.2$), indicating that subjects performed similarly on repeated trials \todo{do paired test}.
+% Participants in Experiment 2 were able to solve the problems in fewer moves on average compared to participants in Experiment 1 ($p < 1e-5$), although comparing high-stakes trials in Experiment 2 did not result in a meaningful difference compared to low-stakes trials ($p > 0.5$). Additionally, repeated trials in Experiment 2 were not completed in fewer moves on average ($p > 0.2$), indicating that subjects performed similarly on repeated trials \todo{do paired test}.
 
-Participants in Experiment 2 exhibited lower termination probability $p_k$ for their fit Geometric distributions over $k$ compared to participants in Experiment 1 ($p < 1e-3$, see Figure \ref{fig:p_k} \todo{Compare to model for both incentive conditions}). This directly corresponds to a higher likelihood of acting consistently with $k > 1$, as $1-p_k$ is the likelihood of acting like $k > 1$, suggesting increased use of multigoals. However, high-stakes trials in Experiment 2 did not result in different termination probability $p$ compared to low-stakes trials ($p > 0.95$).
+% Participants in Experiment 2 exhibited lower termination probability $p_k$ for their fit Geometric distributions over $k$ compared to participants in Experiment 1 ($p < 1e-3$, see Figure \ref{fig:p_k} \todo{Compare to model for both incentive conditions}). This directly corresponds to a higher likelihood of acting consistently with $k > 1$, as $1-p_k$ is the likelihood of acting like $k > 1$, suggesting increased use of multigoals. However, high-stakes trials in Experiment 2 did not result in different termination probability $p$ compared to low-stakes trials ($p > 0.95$).
 
-\todo{\textbf{\Large TOM}: However, the expected value of $k$ for the Geometric distribution is not significantly different. In addition, $p$ is not normally distributed, so using a linear model to make the above comparison isn't appropriate. Please advise.}
+% \todo{\textbf{\Large TOM}: However, the expected value of $k$ for the Geometric distribution is not significantly different. In addition, $p$ is not normally distributed, so using a linear model to make the above comparison isn't appropriate. Please advise.}
 
-Taken together, these results suggest that the addition of an incentive in Experiment 2 led to fewer moves on average due to increased use of multigoals, but a higher incentive in Experiment 2 did not change the strategies employed by participants.
+% Taken together, these results suggest that the addition of an incentive in Experiment 2 led to fewer moves on average due to increased use of multigoals, but a higher incentive in Experiment 2 did not change the strategies employed by participants.
 
 \section{Discussion}
   
