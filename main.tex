@@ -75,11 +75,11 @@ We begin the paper with an overview of previous attempts to capture the way that
 % We begin the paper by discussing relevant theoretical approaches to planning and problem solving. We then present a formal model of planning with composite \textit{multigoals}. Next, we present an experiment designed to dissociate the predictions of the multigoal model from those of standard depth-limited search and hierarchical planning models. We discuss the application of the general model to the specific problem, and present model fitting results. We conclude with a discussion of next steps.
 
 \section{Background}
-Much previous work in psychology has studied the strategies people use to make planning and problem solving tractable. In particular, we focus on two non-exclusive classes of strategies that have been studied: \textit{tree search} and \textit{hierarchical decomposition}. Tree search strategies take inspiration from algorithms based on search through a decision tree, in which possible plans are simulated forward and evaluated~\citep{}. For example, rather than consider plans that are arbitrarily long, people can engage in \textit{depth-limited search} that focuses resources on plans that can be taken within a certain time horizon~\citep{MacGregor2001,Keramati2016,Krusche2018}. Alternatively, they may rely on heuristics to guide search~\cite[chap. 5]{Anderson1990} or use local signals of progress to avoid less promising plans without explicitly considering them~\citep{Huys2012}.
+Much previous work in psychology has studied the strategies people use to make planning and problem solving tractable. In particular, we focus on two non-exclusive classes of strategies that have been studied: \textit{tree search} and \textit{hierarchical decomposition}. Tree search strategies take inspiration from algorithms based on search through a decision tree, in which possible plans are simulated forward and evaluated~\citep{NewellSimon1972}. For example, rather than consider plans that are arbitrarily long, people can engage in \textit{depth-limited search} that focuses resources on plans that can be taken within a certain time horizon~\citep{MacGregor2001,Keramati2016,Krusche2018}. Alternatively, they may rely on heuristics to guide search~\cite[chap. 5]{Anderson1990} or use local signals of progress to avoid less promising plans without explicitly considering them~\citep{Huys2012}.
 
 However, approaches such as depth-limited search and heuristics are, in a sense, limited by their locality---what if the goal is many timesteps away, or even just out of reach? What if the heuristic cues are uninformative or simply do not exist? This, in part, motivates complementary approaches based on \textit{hierarchical decomposition}, in which a problem is holistically broken into sub-problems, each of which are then solved in the right order~\citep{sacerdoti1974planning, botvinick2012hierarchical}. Such an approach can make decision-making easier by reducing the resources needed to solve a given sub-problem at a particular time~\citep{VanDijk2011, Maisto2015}. But this raises yet another problem: What is a good way to break down a task? And what if the particular decomposition could be improved?
 
-The Sussman anomaly exemplifies what happens when a decompositions are too brittle (Figure~\ref{}, \citeNP{}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals as plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
+The Sussman anomaly exemplifies what happens when a decompositions are too brittle (Figure~\ref{}, \citep{Sussman1975}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals since plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
 
 % \subsection{Search and its limitations}
 
@@ -116,7 +116,7 @@ $\beta_g: \mathcal{S} \rightarrow \{0, 1\}$
 that indicates whether a state satisfies the given subgoal. A multigoal is satisfied by a state that satisfies all of its component subgoals; thus, a multigoal's satisfaction function is defined
 $\beta_{\multigoal}(s) = \prod_{g \in \multigoal} \beta_g(s)$. Although multigoals can be integrated into arbitrarily deep hierarchical planning models for stochastic environments, we focus on the simplest case of a two-level hierarchy and deterministic environments. At the abstract level the agent chooses a multigoal based on the current state and ultimate goal. At the concrete level, the agent attempts to find a sequence of actions that satisfies the current multigoal.
 
-A full abstract-level planning model would both identify possible subgoals and also choose which ones to pursue at each step. However, to simplify the problem, we assume that the goals and their ordering are given. That is, the agent receives an ordered set of subgoals $\{ g_1, g_2, \dots g_n  \}$ such that completing all $n$ subgoals in order amounts to solving the ultimate goal. The abstract-level phase of planning is thus reduced to selecting a number of subgoals to pursue; we call this number $k$. Given a selection of $k$ and the multigoal in a given state, $\multigoal(s; k)$ is simply the set of the next $k$ incomplete subgoals. For example, if $g_1$ has been completed ($\beta_{g_1}(s) = 1)$ and $k=2$, we would have $\multigoal(s; k=2) = \{ g_2, g_3 \}$. \red{Admittedly, this simplifying assumption eliminates a considerable amount of interesting complexity. However, it allows us to look for experimental evidence for multigoals without tackling the full problem of multigoal selection. Relaxing this assumption is an important direction for future work.}
+A full abstract-level planning model would both identify possible subgoals and also choose which ones to pursue at each step. However, to simplify the problem, we assume that the goals and their ordering are given. That is, the agent receives an ordered set of subgoals $\{ g_1, g_2, \dots g_n  \}$ such that completing all $n$ subgoals in order amounts to solving the ultimate goal. The abstract-level phase of planning is thus reduced to selecting a number of subgoals to pursue; we call this number $k$. Given a selection of $k$ and the multigoal in a given state, $\multigoal(s; k)$ is simply the set of the next $k$ incomplete subgoals. For example, if $g_1$ has been completed ($\beta_{g_1}(s) = 1)$ and $k=2$, we would have $\multigoal(s; k=2) = \{ g_2, g_3 \}$. Admittedly, this simplifying assumption eliminates a considerable amount of interesting complexity. However, it allows us to look for experimental evidence for multigoals without tackling the full problem of multigoal selection. Relaxing this assumption is an important direction for future work.
 
 % \begin{equation}
 %   \multigoal(s; k) = \{g_i \dots g_{i+k-1} \} \text{ s.t. } 
@@ -138,7 +138,7 @@ There are several special cases of the model worth highlighting. When $k = 1$, w
 
 \section{Experiment 1: Measuring human multigoaling}
 
-To test the predictions of the multigoal model, we conducted a Tower of London (ToL) experiment \cite{Shallice1982}. The classic ToL task is based on the Tower of Hanoi problem, removing the constraints imposed by different-sized disks, but adding a limit to how many disks can be on each peg. Our variant of ToL uses blocks instead of disks and removes the restrictions on stack height. We additionally mark the blocks with letters and use a single standard goal position to reduce working memory requirements. This results in an unambiguous subgoal ordering \citep{Kaller2011}: One must put blocks in their place in reverse alphabetical order.
+To test the predictions of the multigoal model, we conducted a Tower of London (ToL) experiment \cite{Shallice1982} where an initial configuration of stacked items must be rearranged to match a goal configuration by moving one item at a time. The classic ToL task is based on the Tower of Hanoi problem, removing the constraints imposed by different-sized disks, but adding a limit to how many disks can be on each peg. Our variant of ToL uses blocks instead of disks and removes the restrictions on stack height. We additionally mark the blocks with letters and use a single standard goal position to reduce working memory requirements. This results in an unambiguous subgoal ordering \citep{Kaller2011}: One must put blocks in their place in reverse alphabetical order.
 % Thus, the model's simplifying assumption that the order of subgoals is given is innocuous in this specific setting. 
 
 % With these modifications to the rules, our experimental task resembles Blocks World, a domain used to investigate problem solving in artificial intelligence research \todo{XXX connect to Sussman}.
@@ -166,7 +166,8 @@ We recruited 41 participants from Amazon Mechanical Turk. Each participant recei
 
 \subsection{Model}
  
-According to the proposed multigoal model, people can select multiple subgoals to pursue concurrently, attempting to create a plan that satisfies all $k$ subgoals in the fewest steps. In the experimental task, we define a subgoal as putting a block in its correct final position. Thus, we have an ordered set of subgoals $\{ g_F, g_E, g_D, g_C, g_B, g_A \}$ such that completing them in order necessarily solves the full problem. This satisfies the simplifying assumption required by the model, and \red{it is not unreasonable to assume that such a subgoal structure is apparent to the experimental participants.}
+According to the proposed multigoal model, people can select multiple subgoals to pursue concurrently, attempting to create a plan that satisfies all $k$ subgoals in the fewest steps. In the experimental task, we define a subgoal as putting a block in its correct final position. Thus, we have an ordered set of subgoals $\{ g_F, g_E, g_D, g_C, g_B, g_A \}$ such that completing them in order necessarily solves the full problem. This satisfies the simplifying assumption required by the model.
+%, and \red{it is not unreasonable to assume that such a subgoal structure is apparent to the experimental participants.}
 
 
 \newcommand{\A}{\mathcal{A}}
@@ -221,16 +222,16 @@ We fit all models by maxmimum likelihood estimation. For discrete parameters we 
 \toprule
 Model         & \# Parameters & AIC   & LL    & \# Best fit \\
 \midrule
-Geometric k/d & 3 & \textbf{10533} & -5143 & 12 \\
-Poisson k/d & 3 & 10541 & -5147 & 10 \\
-Poisson k & 2 & 11234 & -5535 & 2 \\
-Geometric k & 2 & 11250 & -5543 & 2 \\
-Fixed k/d & 3 & 11518 & -5636 & 0 \\
-Fixed k & 2 & 11705 & -5770 & 0 \\
-Poisson d & 2 & 12364 & -6100 & 7 \\
-k=1 & 1 & 12482 & -6200 & 6 \\
-Geometric d & 2 & 13062 & -6449 & 2 \\
-Fixed d & 2 & 13348 & -6592 & 0 \\
+Geometric $k$/$d$ & 3 & \textbf{10533} & -5143 & 12 \\
+Poisson $k$/$d$ & 3 & 10541 & -5147 & 10 \\
+Poisson $k$ & 2 & 11234 & -5535 & 2 \\
+Geometric $k$ & 2 & 11250 & -5543 & 2 \\
+Fixed $k$/$d$ & 3 & 11518 & -5636 & 0 \\
+Fixed $k$ & 2 & 11705 & -5770 & 0 \\
+Poisson $d$ & 2 & 12364 & -6100 & 7 \\
+$k$=1 & 1 & 12482 & -6200 & 6 \\
+Geometric $d$ & 2 & 13062 & -6449 & 2 \\
+Fixed $d$ & 2 & 13348 & -6592 & 0 \\
 \bottomrule
 \end{tabular}
 \caption{Model comparison: Columns are number of parameters per participant, Akaike information criterion, log likelihood, and the number of participants best fit by the model.}
@@ -248,28 +249,32 @@ Of particular note is that many participants are best explained by a $k=1$ model
 
 The joint model with Geometric distributions over $k$ and $d$ is the best fit for 22 out of 41 participants and best overall fit, suggesting that jointly considering these limits is essential to explaining action in our task.
 
-\todo{figure 4, mention that some participants act consistently with $k > 1$}
+
+\section{Experiment 2: Incentives modulating multigoal complexity}
+In Experiment 1, participants were incentivized to find short solutions only to the extent that it allowed them to complete the experiment more quickly. Because executing moves is very fast in this task, the benefit of considering multiple goals (and thus finding shorter solutions) was not great, perhaps outweighed by the cognitive effort associated with more complex multigoals. To explore whether people may adapt the size of their multigoals in response to increasing pressure to solve problems efficiently, we conducted a second experiment in which participants were moetarily incentivized to take as few moves as possible on each problem.
+
+\section{Methods}
+\subsubsection{Stimuli and procedure}
+The primary modification from Experiment 1 was the introduction of a points system. Participants began each problem with some number of points, which was decremented each time they moved a block. The initial points for each problem was set to the 95\% quantile of the number moves taken on that problem in Experiment 1. After solving each problem, the leftover points were added to a running total. At the end of the experiment, participants were given bonus payments equal to one cent per point. The critical manipulation was to increase the stakes of certain problems, multiplying both the initial point count and the cost-per-move by three. To maximize statistical power, we duplicated each problem from Experiment 1, presenting it once as a low-stakes problem and again as a high-stakes problem. To reduce the probability of participants noticing the duplicates, we swapped the left and right columns of the initial state, a manipulation that changes the visual appearance without altering the abstract structure of the problem. This procedure revealed that two of the problems selected for Experiment 1 were already mirrored duplicates of another problem. We replaced these two problems with new problems, and conservatively set the number of initial points to the largest of the other problems.
+
+\subsubsection{Participants}
+We recruited 40 participants from Amazon Mechanical Turk. Each participant received \$0.50 for completing the task, plus a performance-dependent bonus (mean: \$3.18). The task took an average of 20 minutes.
+
+\subsection{Results}
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=6cm]{geom-k-p}
-    \caption{Distribution of parameter $p$ for Geometric distribution over $k$. Each point is the model fit for one participant. The Geometric models over $k$ and $d$ were compared to determine the color of each point.}
+    \includegraphics[scale=0.5]{geom-k-p}
+    \caption{Distribution of $\Pr(k > 1)$ (equivalently, parameter $1-p_k$ for Geometric distribution over $k$) in Experiment 1 as well as low- and high-stakes trials in Experiment 2. Each point is the model fit for one participant. Model fits across conditions in Experiment 2 for a participant are connected with a line.}
 \end{figure}
 
+Participants in Experiment 2 were able to solve the problems in fewer moves on average compared to participants in Experiment 1 ($p < 1e-5$), although comparing high-stakes trials in Experiment 2 did not result in a meaningful difference compared to low-stakes trials ($p > 0.5$). Additionally, repeated trials in Experiment 2 were not completed in fewer moves on average ($p > 0.2$), indicating that subjects performed similarly on repeated trials \todo{do paired test}.
 
-% \section{Experiment 2: Incentives modulating multigoal complexity}
-% In Experiment 1, participants were incentivized to find short solutions only to the extent that it allowed them to complete the experiment more quickly. Because executing moves is very fast in this task, the benefit of considering multiple goals (and thus finding shorter solutions) was not great, perhaps outweighed by the cognitive effort associated with more complex multigoals. To explore whether people may adapt the size of their multigoals in response to increasing pressure to solve problems efficiently, we conducted a second experiment in which participants were moetarily incentivized to take as few moves as possible on each problem.
+Participants in Experiment 2 exhibited lower termination probability $p_k$ for their fit Geometric distributions over $k$ compared to participants in Experiment 1 ($p < 1e-3$, see Figure 4 \todo{Compare to model for both incentive conditions}). This directly corresponds to a higher likelihood of acting consistently with $k > 1$, as $1-p_k$ is the likelihood of acting like $k > 1$, suggesting increased use of multigoals. However, high-stakes trials in Experiment 2 did not result in different termination probability $p$ compared to low-stakes trials ($p > 0.95$).
 
-% \section{Methods}
-% \subsubsection{Stimuli and procedure}
-% The primary modification from Experiment 1 was the introduction of a points system. Participants began each problem with some number of points, which was decremented each time they moved a block. The initial points for each problem was set to the 95\% quantile of the number moves taken on that problem in Experiment 1. After solving each problem, the leftover points were added to a running total. At the end of the experiment, participants were given bonus payments equal to one cent per point. The critical manipulation was to increase the stakes of certain problems, multiplying both the initial point count and the cost-per-move by three. To maximize statistical power, we duplicated each problem from Experiment 1, presenting it once as a low-stakes problem and again as a high-stakes problem. To reduce the probability of participants noticing the duplicates, we swapped the left and right columns of the initial state, a manipulation that changes the visual appearance without altering the abstract structure of the problem. This procedure revealed that two of the problems selected for Experiment 1 were already mirrored duplicates of another problem. We replaced these two problems with new problems, and conservatively set the number of initial points to the largest of the other problems.
+\todo{\textbf{\Large TOM}: However, the expected value of $k$ for the Geometric distribution is not significantly different. In addition, $p$ is not normally distributed, so using a linear model to make the above comparison isn't appropriate. Please advise.}
 
-
-% \subsubsection{Participants}
-% We recruited 40 participants from Amazon Mechanical Turk. Each participant received \$0.50 for completing the task, plus a performance-dependent bonus (mean: \$3.18). The task took an average of \MISSING minutes.
-
-% \subsection{Results}
-% \todo{}
+Taken together, these results suggest that the addition of an incentive in Experiment 2 led to fewer moves on average due to increased use of multigoals, but a higher incentive in Experiment 2 did not change the strategies employed by participants.
 
 \section{Discussion}
   
@@ -287,7 +292,7 @@ Another major direction for future work is to remove the simplifying assumption 
 \bibliographystyle{apacite}
 \setlength{\bibleftmargin}{.125in}
 \setlength{\bibindent}{-\bibleftmargin}
-
+\renewcommand*{\bibfont}{\footnotesize}
 \bibliography{references}
 
 
