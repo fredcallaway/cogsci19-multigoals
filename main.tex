@@ -214,45 +214,51 @@ We fit all models by maxmimum likelihood estimation. For discrete parameters we 
 \subsection{Results}
 
 \begin{figure}[t!]
-    \centering
-    \includegraphics[scale=0.5]{model-fits}
-    \caption{AIC for model fits. Each point is the model fit across all actions in all problems solved by a single participant.}
+  \centering
+  \includegraphics[scale=0.55]{model-fits}
+  \caption{Relative model performance. Each point represents one model fit to the data of one participant. For ease of comparison, we normalize the AIC values for each participant by the AIC of their best fitting model. The same additive transformation is applied to the AIC values for each model, and thus the mean differences between models are not affected.} 
+  \label{fig:model-fits}
 \end{figure}
 
 \begin{table}[t!]
-\centering
-\begin{tabular}{lrrrr}
-\toprule
-Model         & \# Parameters & AIC   & LL    & \# Best fit \\
-\midrule
-Geometric $k$/$d$ & 3 & \textbf{10533} & -5143 & 12 \\
-Poisson $k$/$d$ & 3 & 10541 & -5147 & 10 \\
-Poisson $k$ & 2 & 11234 & -5535 & 2 \\
-Geometric $k$ & 2 & 11250 & -5543 & 2 \\
-Fixed $k$/$d$ & 3 & 11518 & -5636 & 0 \\
-Fixed $k$ & 2 & 11705 & -5770 & 0 \\
-Poisson $d$ & 2 & 12364 & -6100 & 7 \\
-$k$=1 & 1 & 12482 & -6200 & 6 \\
-Geometric $d$ & 2 & 13062 & -6449 & 2 \\
-Fixed $d$ & 2 & 13348 & -6592 & 0 \\
-\bottomrule
-\end{tabular}
-\caption{Model comparison: Columns are number of parameters per participant, Akaike information criterion, log likelihood, and the number of participants best fit by the model.}
-%, and Number of Participants best fit by the model (with parameters optimized separately)
+  \centering
+  \begin{tabular}{lrrrr}
+  \toprule
+  Model         & \# Parameters & AIC   & LL    & \# Best fit \\
+  \midrule
+  Geometric $k$/$d$ & 3 & \textbf{10533} & -5143 & 12 \\
+  Poisson $k$/$d$ & 3 & 10541 & -5147 & 10 \\
+  Poisson $k$ & 2 & 11234 & -5535 & 2 \\
+  Geometric $k$ & 2 & 11250 & -5543 & 2 \\
+  Fixed $k$/$d$ & 3 & 11518 & -5636 & 0 \\
+  Fixed $k$ & 2 & 11705 & -5770 & 0 \\
+  Poisson $d$ & 2 & 12364 & -6100 & 7 \\
+  $k$=1 & 1 & 12482 & -6200 & 6 \\
+  Geometric $d$ & 2 & 13062 & -6449 & 2 \\
+  Fixed $d$ & 2 & 13348 & -6592 & 0 \\
+  \bottomrule
+  \end{tabular}
+  \caption{Model comparison: Columns are number of parameters per participant, Akaike information criterion, log likelihood, and the number of participants best fit by the model.}
+  \label{tab:model-fits}
 \end{table}
 
-Models were fit for each participant, see Figure 3.
+We fit the parameters of each model separately for each participant. Results are summarized in Figure~\ref{fig:model-fits} and Table~\ref{tab:model-fits}. We highlight three primary results below.
 
-Models with distributions over model parameters $k$ and $d$ were generally better fits than those with fixed parameters, suggesting that people flexibly adapt these limitations on planning.
+First, all models that include multigoals (the first six rows in the table) explain the data significantly better than the $k=1$ model. This suggests that people are not limited to pursuing one subgoal at a time. That being said, for many participants, the best fitting $p_k$ parameter in the Geometric $k/d$ model was close to one, resulting in single subgoal planning in most cases. In particular $p_k$ was greater than 0.95 for \MISSING out of \MISSING participants, which results in considering more than one subgoal only 5\% of the time.
 
-Models with distributions over $k$ were better fits than models with distributions over $d$ in 28 out of 41 participants, suggesting that goal-based planning may better explain participant actions than depth limits in this task.
+% Of particular note is that many participants are best explained by a $k=1$ model or Geometric distribution with large $p$ (which acts like the $k=1$ model with probability $p$). The case of $k=1$ amounts to simple hierarchical planning, where search finds optimal paths towards the next incomplete subgoal. It's particularly interesting that the $k=1$ is a comparable fit to the best depth model in 27 out of 41 participants, suggesting that in at least this task even very simple goal representations are a strong constraint on search that can explain action comparably to well-established models of search.
 
-Of particular note is that many participants are best explained by a $k=1$ model or Geometric distribution with large $p$ (which acts like the $k=1$ model with probability $p$). The case of $k=1$ amounts to simple hierarchical planning, where search finds optimal paths towards the next incomplete subgoal. It's particularly interesting that the $k=1$ is a comparable fit to the best depth model in 27 out of 41 participants, suggesting that in at least this task even very simple goal representations are a strong constraint on search that can explain action comparably to well-established models of search.
+Second, all models with free $k$ parameters performed better than the models with free $d$ parameters. This suggests that limits on composite subgoal representations provide a better explanation for participants' behavior than limits on the depth of search. However, models that include both kinds of limits perform best. This suggests that human problem solving may be jointly constrained by subgoal representations and search depth, and that these two constraints each provide unique contributions to explaining behavior.
 
-The joint model with Geometric distributions over $k$ and $d$ is the best fit for 22 out of 41 participants and best overall fit, suggesting that jointly considering these limits is essential to explaining action in our task.
+Third, models with distributions over model parameters $k$ and $d$ always performed better than the corresponding models with fixed parameters. This suggests that people consider different numbers of subgoals and search to different depths at different points. This observation might be explained by the dynamic nature of problem solving. For example, the configuration of blocks at any moment may determine the number of subgoals a person is capable of considering. An alternative (although not mutually exclusive) explanation is that our participants adaptively adjusted the complexity of their multigoals, choosing how much effort to put into the problem based on an estimate of how much doing so will improve their performance \citep{Shenhav2017,lieder2017strategy}.
+
+% Models with distributions over $k$ were better fits than models with distributions over $d$ in 28 out of 41 participants, suggesting that goal-based planning may better explain participant actions than depth limits in this task.
 
 
-\section{Experiment 2: Incentives modulating multigoal complexity}
+% The joint model with Geometric distributions over $k$ and $d$ is the best fit for 22 out of 41 participants and best overall fit, suggesting that jointly considering these limits is essential to explaining action in our task.
+
+% modulating > modulate. I think it's better to make a strong statement. I don't think it's important to match the "-ing" construction in the Experiment 1 title. -Fred
+\section{Experiment 2: Incentives modulate multigoal complexity}
 In Experiment 1, participants were incentivized to find short solutions only to the extent that it allowed them to complete the experiment more quickly. Because executing moves is very fast in this task, the benefit of considering multiple goals (and thus finding shorter solutions) was not great, perhaps outweighed by the cognitive effort associated with more complex multigoals. To explore whether people may adapt the size of their multigoals in response to increasing pressure to solve problems efficiently, we conducted a second experiment in which participants were moetarily incentivized to take as few moves as possible on each problem.
 
 \section{Methods}
@@ -266,7 +272,7 @@ We recruited 40 participants from Amazon Mechanical Turk. Each participant recei
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[scale=0.5]{geom-k-p}
+    \includegraphics[scale=0.55]{geom-k-p}
     \caption{Distribution of $\Pr(k > 1)$ (equivalently, parameter $1-p_k$ for Geometric distribution over $k$) in Experiment 1 as well as low- and high-stakes trials in Experiment 2. Each point is the model fit for one participant. Model fits across conditions in Experiment 2 for a participant are connected with a line.}
 \end{figure}
 
