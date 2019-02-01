@@ -79,7 +79,14 @@ Much previous work in psychology has studied the strategies people use to make p
 
 However, approaches such as depth-limited search and heuristics are, in a sense, limited by their locality---what if the goal is many timesteps away, or even just out of reach? What if the heuristic cues are uninformative or simply do not exist? This, in part, motivates complementary approaches based on \textit{hierarchical decomposition}, in which a problem is holistically broken into sub-problems, each of which are then solved in the right order~\citep{sacerdoti1974planning, botvinick2012hierarchical}. Such an approach can make decision-making easier by reducing the resources needed to solve a given sub-problem at a particular time~\citep{VanDijk2011, Maisto2015}. But this raises yet another problem: What is a good way to break down a task? And what if the particular decomposition could be improved?
 
-The Sussman anomaly exemplifies what happens when a decomposition is too  brittle (Figure~\ref{}, \citealp{Sussman1975}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals since plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=6cm]{example-suss}
+    \caption{Depicts Sussman's anomaly. In this block stacking problem, the aim is to stack the blocks in alphabetical order by satisfying two subgoals: stack B on C and stack A on B. Planning towards one subgoal is inefficient by taking actions that will need to be reversed. Only by jointly considering the subgoals can the problem be efficiently solved.}
+    \label{fig:suss}
+\end{figure*}
+
+The Sussman anomaly exemplifies what happens when a decomposition is too  brittle (Figure~\ref{fig:suss}, \citealp{Sussman1975}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals since plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure \ref{fig:fourblock} demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
 
 % \subsection{Search and its limitations}
 
@@ -100,10 +107,12 @@ The Sussman anomaly exemplifies what happens when a decomposition is too  brittl
 % \todo{This might be too much detail for the background}
 % Our work here can be understood as analyzing \textit{subgoal resolution} as a factor in the construction of hierarchical plans in humans. At a particular moment in time, a person will have a subgoal they want to complete. Compare the subgoal ``mail a letter'' with the subgoal ``mail a letter AND go to the grocery''. The second subgoal has higher \textit{resolution} than the first in that it is more specific and picks out a strictly smaller set of states as acceptable for completion. This factor is a key element for any hierarchical planning scheme. For example, in formalisms such as the options framework~\citep{sutton1999between}, macro-actions (i.e., options) are defined in part by the set of states in which one exits an option. Our approach can be understood then as considering the complexity of the predicates defining a termination condition when people hierarchically decompose a task.
 
+
 \begin{figure*}[ht]
     \centering
     \includegraphics[width=0.9\textwidth]{example-4-block.png}
     \caption{Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied.}
+    \label{fig:fourblock}
 \end{figure*}
 
 
@@ -151,7 +160,7 @@ To test the predictions of the multigoal model, we conducted a Tower of London (
 \subsection{Methods}
 \subsubsection{Stimuli and procedure}
 
-In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the goal configuration (Fig. 2). Only the top block of a stack can be moved, and the board is limited to contain at most three spaces (columns) for stacks. In all trials, the goal configuration is a single stack arranged in alphabetical order in the middle column.
+In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the goal configuration (Fig. \ref{fig:ui}). Only the top block of a stack can be moved, and the board is limited to contain at most three spaces (columns) for stacks. In all trials, the goal configuration is a single stack arranged in alphabetical order in the middle column.
 
 Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of the fixed $k$multigoal model (Equation~\ref{eq:likelihood-fixed}) and the depth-limited model on data simulated from multigoal agents with $k \in \{ 1,2,3,4 \}$. That is, the problems were optimized to distinguish the behavioral signature of multigoals from that of constraints on search depth.
 
@@ -159,6 +168,7 @@ Participants completed three tutorial trials of increasing difficulty (a 3-block
     \centering
     \includegraphics[width=6cm]{example-block-world.png}
     \caption{Experimental interface. On the left is the initial state which must be rearranged to match the goal state at right.}
+    \label{fig:ui}
 \end{figure}
 
 \subsubsection{Participants}
@@ -217,6 +227,7 @@ We fit all models by maxmimum likelihood estimation. For discrete parameters we 
     \centering
     \includegraphics[scale=0.5]{model-fits}
     \caption{AIC for model fits. Each point is the model fit across all actions in all problems solved by a single participant.}
+    \label{fig:fits}
 \end{figure}
 
 \begin{table}[t!]
@@ -241,7 +252,7 @@ Fixed $d$ & 2 & 13348 & -6592 & 0 \\
 %, and Number of Participants best fit by the model (with parameters optimized separately)
 \end{table}
 
-Models were fit for each participant, see Figure 3.
+Models were fit for each participant, see Figure \ref{fig:fits}.
 
 Models with distributions over model parameters $k$ and $d$ were generally better fits than those with fixed parameters, suggesting that people flexibly adapt these limitations on planning.
 
@@ -268,11 +279,12 @@ We recruited 40 participants from Amazon Mechanical Turk. Each participant recei
     \centering
     \includegraphics[scale=0.5]{geom-k-p}
     \caption{Distribution of $\Pr(k > 1)$ (equivalently, parameter $1-p_k$ for Geometric distribution over $k$) in Experiment 1 as well as low- and high-stakes trials in Experiment 2. Each point is the model fit for one participant. Model fits across conditions in Experiment 2 for a participant are connected with a line.}
+    \label{fig:p_k}
 \end{figure}
 
 Participants in Experiment 2 were able to solve the problems in fewer moves on average compared to participants in Experiment 1 ($p < 1e-5$), although comparing high-stakes trials in Experiment 2 did not result in a meaningful difference compared to low-stakes trials ($p > 0.5$). Additionally, repeated trials in Experiment 2 were not completed in fewer moves on average ($p > 0.2$), indicating that subjects performed similarly on repeated trials \todo{do paired test}.
 
-Participants in Experiment 2 exhibited lower termination probability $p_k$ for their fit Geometric distributions over $k$ compared to participants in Experiment 1 ($p < 1e-3$, see Figure 4 \todo{Compare to model for both incentive conditions}). This directly corresponds to a higher likelihood of acting consistently with $k > 1$, as $1-p_k$ is the likelihood of acting like $k > 1$, suggesting increased use of multigoals. However, high-stakes trials in Experiment 2 did not result in different termination probability $p$ compared to low-stakes trials ($p > 0.95$).
+Participants in Experiment 2 exhibited lower termination probability $p_k$ for their fit Geometric distributions over $k$ compared to participants in Experiment 1 ($p < 1e-3$, see Figure \ref{fig:p_k} \todo{Compare to model for both incentive conditions}). This directly corresponds to a higher likelihood of acting consistently with $k > 1$, as $1-p_k$ is the likelihood of acting like $k > 1$, suggesting increased use of multigoals. However, high-stakes trials in Experiment 2 did not result in different termination probability $p$ compared to low-stakes trials ($p > 0.95$).
 
 \todo{\textbf{\Large TOM}: However, the expected value of $k$ for the Geometric distribution is not significantly different. In addition, $p$ is not normally distributed, so using a linear model to make the above comparison isn't appropriate. Please advise.}
 
