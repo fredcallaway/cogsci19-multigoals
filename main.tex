@@ -74,17 +74,11 @@ We begin the paper with an overview of previous attempts to capture the way that
 
 % We begin the paper by discussing relevant theoretical approaches to planning and problem solving. We then present a formal model of planning with composite \textit{multigoals}. Next, we present an experiment designed to dissociate the predictions of the multigoal model from those of standard depth-limited search and hierarchical planning models. We discuss the application of the general model to the specific problem, and present model fitting results. We conclude with a discussion of next steps.
 
+
 \section{Background}
 Much previous work in psychology has studied the strategies people use to make planning and problem solving tractable. In particular, we focus on two non-exclusive classes of strategies that have been studied: \textit{tree search} and \textit{hierarchical decomposition}. Tree search strategies take inspiration from algorithms based on search through a decision tree, in which possible plans are simulated forward and evaluated~\citep{NewellSimon1972}. For example, rather than consider plans that are arbitrarily long, people can engage in \textit{depth-limited search} that focuses resources on plans that can be taken within a certain time horizon~\citep{MacGregor2001,Keramati2016,Krusche2018}. Alternatively, they may rely on heuristics to guide search~\cite[chap. 5]{Anderson1990} or use local signals of progress to avoid less promising plans without explicitly considering them~\citep{Huys2012}.
 
 However, approaches such as depth-limited search and heuristics are, in a sense, limited by their locality---what if the goal is many timesteps away, or even just out of reach? What if the heuristic cues are uninformative or simply do not exist? This, in part, motivates complementary approaches based on \textit{hierarchical decomposition}, in which a problem is holistically broken into sub-problems, each of which are then solved in the right order~\citep{sacerdoti1974planning, botvinick2012hierarchical}. Such an approach can make decision-making easier by reducing the resources needed to solve a given sub-problem at a particular time~\citep{VanDijk2011, Maisto2015}. But this raises yet another problem: What is a good way to break down a task? And what if the particular decomposition could be improved?
-
-\begin{figure*}[ht]
-    \centering
-    \includegraphics[width=6cm]{example-suss}
-    \caption{Depicts Sussman's anomaly. In this block stacking problem, the aim is to stack the blocks in alphabetical order by satisfying two subgoals: stack B on C and stack A on B. Planning towards one subgoal is inefficient by taking actions that will need to be reversed. Only by jointly considering the subgoals can the problem be efficiently solved.}
-    \label{fig:suss}
-\end{figure*}
 
 The Sussman anomaly exemplifies what happens when a decomposition is too  brittle (Figure~\ref{fig:suss}, \citealp{Sussman1975}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals since plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure \ref{fig:fourblock} demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
 
@@ -108,14 +102,12 @@ The Sussman anomaly exemplifies what happens when a decomposition is too  brittl
 % Our work here can be understood as analyzing \textit{subgoal resolution} as a factor in the construction of hierarchical plans in humans. At a particular moment in time, a person will have a subgoal they want to complete. Compare the subgoal ``mail a letter'' with the subgoal ``mail a letter AND go to the grocery''. The second subgoal has higher \textit{resolution} than the first in that it is more specific and picks out a strictly smaller set of states as acceptable for completion. This factor is a key element for any hierarchical planning scheme. For example, in formalisms such as the options framework~\citep{sutton1999between}, macro-actions (i.e., options) are defined in part by the set of states in which one exits an option. Our approach can be understood then as considering the complexity of the predicates defining a termination condition when people hierarchically decompose a task.
 
 
-\begin{figure*}[ht]
+\begin{figure}[ht!]
     \centering
-    \includegraphics[width=0.9\textwidth]{example-4-block.png}
-    \caption{Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied.}
-    \label{fig:fourblock}
-\end{figure*}
-
-
+    \includegraphics[width=0.5\textwidth]{example-suss}
+    \caption{Sussman's anomaly. In this block stacking problem, the aim is to stack the blocks in alphabetical order by satisfying two subgoals: stack B on C and stack A on B. Planning towards one subgoal at a time results in taking actions that will need to be reversed. Only by jointly considering the subgoals can the problem be efficiently solved.}
+    \label{fig:suss}
+\end{figure}
 
 \section{Planning with multigoals}
 \newcommand{\multigoal}{\mathcal{G}}
@@ -143,6 +135,14 @@ Given a multigoal $\multigoal$, concrete-level planning uses tree search to find
 where $s_\pi$ is the final state on the path defined by the action sequence $\pi$ and $\lambda$ is a very small positive constant, with the effect that $\pi$ is chosen to maximize the first term (number of subgoals completed), using the second term (path length) as a tie-breaker.
 
 There are several special cases of the model worth highlighting. When $k = 1$, we recover a standard hierarchical planning algorithm in which only one subgoal is pursued at a time. When $k = \infty$, we recover a standard depth-limited search model with a heuristic cost function defined by the number of incomplete subgoals. When $d = \infty$, the model optimally achieves each multigoal, but may still perform suboptimally because future subgoals are not considered. And when $d = k = \infty$, the model always makes optimal choices.
+
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{example-4-block.png}
+    \caption{Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied.}
+    \label{fig:fourblock}
+\end{figure*}
 
 
 \section{Experiment 1: Measuring human multigoaling}
