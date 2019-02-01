@@ -89,7 +89,8 @@ Much previous work in psychology has studied the strategies people use to make p
 
 However, approaches such as depth-limited search and heuristics are, in a sense, limited by their locality---what if the goal is many timesteps away, or even just out of reach? What if the heuristic cues are uninformative or simply do not exist? This, in part, motivates complementary approaches based on \textit{hierarchical decomposition}, in which a problem is holistically broken into sub-problems, each of which are then solved in the right order~\citep{sacerdoti1974planning, botvinick2012hierarchical}. Such an approach can make decision-making easier by reducing the resources needed to solve a given sub-problem at a particular time~\citep{VanDijk2011, Maisto2015}. But this raises yet another problem: What is a good way to break down a task? And what if the particular decomposition could be improved?
 
-The Sussman anomaly exemplifies what happens when a decomposition is too  brittle (Figure~\ref{fig:suss}, \citealp{Sussman1975}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals since plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure \ref{fig:fourblock} demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
+The Sussman anomaly exemplifies what happens when a decomposition is too  brittle (Figure~\ref{fig:suss}, \citealp{Sussman1975}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals since plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure \ref{fig:fourblock} demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. 
+% More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
 
 % \subsection{Search and its limitations}
 
@@ -121,7 +122,11 @@ The Sussman anomaly exemplifies what happens when a decomposition is too  brittl
 \begin{figure*}[ht]
     \centering
     \includegraphics[width=0.9\textwidth]{example-4-block}
-    \caption{Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied.}
+    \caption{
+    Planning with multigoals of different size $k$ can lead to different action sequences. In this example, planning with $k=2$ ensures that A is moved first which avoids extraneous actions at future states. Green blocks represent subgoals that have been satisfied and blue blocks represent the subgoals in the current multigoal, used to plan the next action.
+    
+    %Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied.
+    }
     \label{fig:fourblock}
 \end{figure*}
 
@@ -157,7 +162,7 @@ There are several special cases of the model worth highlighting. When $k = 1$, w
 
 \section{Experiment 1: Measuring human multigoaling}
 
-To test the predictions of the multigoal model, we conducted a Tower of London (ToL) experiment \citep{Shallice1982} where an initial configuration of stacked items must be rearranged to match a goal configuration by moving one item at a time. The classic ToL task is based on the Tower of Hanoi problem, removing the constraints imposed by different-sized disks, but adding a limit to how many disks can be on each peg. Our variant of ToL uses blocks instead of disks and removes the restrictions on stack height. We additionally mark the blocks with letters and use a single standard goal position to reduce working memory requirements. This results in an unambiguous subgoal ordering \citep{Kaller2011}: One must put blocks in their place in reverse alphabetical order.
+To test the predictions of the multigoal model, we conducted a Tower of London (ToL) experiment~\citep{Shallice1982} where an initial configuration of stacked items must be rearranged to match a goal configuration by moving one item at a time. The classic ToL task is based on the Tower of Hanoi problem, removing the constraints imposed by different-sized disks, but adding a limit to how many disks can be on each peg. Our variant of ToL uses blocks instead of disks and removes the restrictions on stack height. We additionally mark the blocks with letters and use a single standard goal position to reduce working memory requirements. This results in an unambiguous subgoal ordering~\citep{Kaller2011}: One must put blocks in their place in reverse alphabetical order.
 % Thus, the model's simplifying assumption that the order of subgoals is given is innocuous in this specific setting. 
 
 % With these modifications to the rules, our experimental task resembles Blocks World, a domain used to investigate problem solving in artificial intelligence research \todo{XXX connect to Sussman}.
@@ -172,7 +177,7 @@ To test the predictions of the multigoal model, we conducted a Tower of London (
 
 In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the goal configuration (Fig. \ref{fig:ui}). Only the top block of a stack can be moved, and the board is limited to contain at most three spaces (columns) for stacks. In all trials, the goal configuration is a single stack arranged in alphabetical order in the middle column.
 
-Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of the fixed $k$multigoal model (Equation~\ref{eq:likelihood-fixed}) and the depth-limited model on data simulated from multigoal agents with $k \in \{ 1,2,3,4 \}$. That is, the problems were optimized to distinguish the behavioral signature of multigoals from that of constraints on search depth.
+Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of the fixed $k$ multigoal model (Equation~\ref{eq:likelihood-fixed}) and the depth-limited model on data simulated from multigoal agents with $k \in \{ 1,2,3,4 \}$. That is, the problems were optimized to distinguish the behavioral signature of multigoals from that of constraints on search depth.
 
 \begin{figure}[t!]
     \centering
@@ -271,7 +276,8 @@ First, all models that include multigoals (the first six rows in the table) expl
 Second, all models with free $k$ parameters performed better than the models with free $d$ parameters. This suggests that limits on composite subgoal representations provide a better explanation for participants' behavior than limits on the depth of search. However, models that include both kinds of limits perform best. This suggests that human problem solving may be jointly constrained by subgoal representations and search depth, and that these two constraints each provide unique contributions to explaining behavior.
 
 Third, models with distributions over model parameters $k$ and $d$ always performed better than the corresponding models with fixed parameters. This suggests that people consider different numbers of subgoals and search to different depths at different points. This effect could be due to changing problem. The configuration of blocks at any moment may determine, for example, the number of subgoals a person is capable of considering. An alternative (although not mutually exclusive) explanation is that our participants adaptively adjusted the complexity of their multigoals, choosing how much effort to put into the problem based on an estimate of how much doing so will improve their performance \citep{Shenhav2017,lieder2017strategy}.
-Under this explanation, we would predict that people will use more complex multigoals when finding an efficient solution is more important. We set out to test this prediction in a second experiment.
+
+% Under this explanation, we would predict that people will use more complex multigoals when finding an efficient solution is more important. We set out to test this prediction in a second experiment.
 
 % Models with distributions over $k$ were better fits than models with distributions over $d$ in 28 out of 41 participants, suggesting that goal-based planning may better explain participant actions than depth limits in this task.
 
@@ -294,7 +300,7 @@ Under this explanation, we would predict that people will use more complex multi
 \begin{figure}[ht]
     \centering
     \includegraphics[scale=0.55]{geom-k-p}
-    \caption{Distribution of $\Pr(k > 1)$ (equivalently, parameter $1-p_k$ for Geometric distribution over $k$) in Experiment 1 as well as low- and high-stakes trials in Experiment 2. Each point is the model fit for one participant. Model fits across conditions in Experiment 2 for a participant are connected with a line.}
+    \caption{Distribution of $\Pr(k > 1)$ (equivalently, parameter $1-p_k$ for Geometric $k$/$d$ model) suggests the use of multigoals.}
     \label{fig:p_k}
 \end{figure}
 
