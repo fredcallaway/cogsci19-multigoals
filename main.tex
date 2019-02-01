@@ -119,6 +119,15 @@ The Sussman anomaly exemplifies what happens when a decomposition is too  brittl
     \label{fig:suss}
 \end{figure}
 
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{example-4-block}
+    \caption{Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied.}
+    \label{fig:fourblock}
+\end{figure*}
+
+
+
 \section{Planning with multigoals}
 \newcommand{\multigoal}{\mathcal{G}}
 
@@ -145,14 +154,6 @@ Given a multigoal $\multigoal$, concrete-level planning uses tree search to find
 where $s_\pi$ is the final state on the path defined by the action sequence $\pi$ and $\lambda$ is a very small positive constant, with the effect that $\pi$ is chosen to maximize the first term (number of subgoals completed), using the second term (path length) as a tie-breaker.
 
 There are several special cases of the model worth highlighting. When $k = 1$, we recover a standard hierarchical planning algorithm in which only one subgoal is pursued at a time. When $k = \infty$, we recover a standard depth-limited search model with a heuristic cost function defined by the number of incomplete subgoals. When $d = \infty$, the model optimally achieves each multigoal, but may still perform suboptimally because future subgoals are not considered. And when $d = k = \infty$, the model always makes optimal choices.
-
-
-\begin{figure*}[ht]
-    \centering
-    \includegraphics[width=0.9\textwidth]{example-4-block.png}
-    \caption{Planning to stack C on D might result in either of the two depicted plans, where A or B is first removed. Removing A first (the lower plan) winds up being more efficient, taking 1 step fewer to achieve the goal state. When planning with respect to two subgoals (stack C on D and stack B on C), an agent will always choose to remove A first (like in the lower plan) since they are optimizing for the eventual placement of B. Blocks are green when their corresponding subgoal has been satisfied.}
-    \label{fig:fourblock}
-\end{figure*}
 
 
 \section{Experiment 1: Measuring human multigoaling}
@@ -228,7 +229,7 @@ We consider two hypotheses for how $k$ and $d$ are chosen when they are free par
 Despite the infinite summation, we can compute this value exactly because we need only enumerate each parameter up to the value at which it results in optimal decision making, $\theta^*$. All greater values give the same prediction, thus we can treat them as a single bin with prior probability $\Pr(\theta > \theta^*)$ evaluated at $\theta^*$ and likelihood  $\Pr(a \mid s; \theta^*)$.
 }
 
-We fit all models by maxmimum likelihood estimation. For discrete parameters we used grid search, considering all possible values of $k \in \{ 1 \dots 6 \}$ and values of $d \in \{1 \dots \MISSING \}$. For continuous parameters, we used \red{some convex optimizer} with \MISSING random initializations to mitigate the risk of finding local minima.
+We fit all models by maxmimum likelihood estimation. For discrete parameters we used grid search, considering all possible values of $k \in \{ 1 \dots 6 \}$ and values of $d \in \{1 \dots 15 \}$. We chose 15 as this was the farthest a participant ever was from a goal state. For continuous parameters, we used L-BFGS.
 
 
 \subsection{Results}
@@ -264,7 +265,7 @@ We fit all models by maxmimum likelihood estimation. For discrete parameters we 
 
 We fit the parameters of each model separately for each participant. Results are summarized in Figure~\ref{fig:model-fits} and Table~\ref{tab:model-fits}. We highlight three primary results below.
 
-First, all models that include multigoals (the first six rows in the table) explain the data significantly better than the $k=1$ model. This suggests that people are not limited to pursuing one subgoal at a time. That being said, for many participants, the best fitting $p_k$ parameter in the Geometric $k/d$ model was close to one, resulting in single subgoal planning in most cases. In particular $p_k$ was greater than 0.95 for \MISSING out of \MISSING participants, suggesting that these participants considered more than one subgoal only 5\% of the time.
+First, all models that include multigoals (the first six rows in the table) explain the data significantly better than the $k=1$ model. This suggests that people are not limited to pursuing one subgoal at a time. That being said, for many participants, the best fitting $p_k$ parameter in the Geometric $k/d$ model was close to one, resulting in single subgoal planning in most cases. In particular $p_k$ was greater than 0.95 for 12 out of 41 participants, suggesting that these participants considered more than one subgoal only 5\% of the time.
 
 % Of particular note is that many participants are best explained by a $k=1$ model or Geometric distribution with large $p$ (which acts like the $k=1$ model with probability $p$). The case of $k=1$ amounts to simple hierarchical planning, where search finds optimal paths towards the next incomplete subgoal. It's particularly interesting that the $k=1$ is a comparable fit to the best depth model in 27 out of 41 participants, suggesting that in at least this task even very simple goal representations are a strong constraint on search that can explain action comparably to well-established models of search.
 
