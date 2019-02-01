@@ -31,7 +31,7 @@
 \MakeOuterQuote{"}
 \usepackage{booktabs}
 
-\title{Compositional sub-goal representations for planning and problem-solving}
+\title{Compositional subgoal representations for planning and problem-solving}
 
 \newcommand{\todo}[1]{\textcolor{red}{\textsc{[TODO: #1]}}}
 \newcommand{\red}[1]{\textcolor{red}{#1}}
@@ -49,7 +49,7 @@
 When faced with a large and complex problem, people naturally break it up into several smaller and simpler problems. This hierarchical decomposition of an ultimate goal into sub-goals facilitates planning by reducing the number of factors that must be considered at one time. However, it can also lead to suboptimal decision-making, missing opportunities to make progress towards multiple subgoals with a single action. This potential for suboptimality can be ameliorated by considering multiple subgoals at once, but at the cost of increasing the number of factors that must be considered and thus increasing the computational burden of planning. Here, we present a model of planning with compositional goal representations and show that it explains the errors people make in a Towers of London task better than a limited-depth search model. Our results suggest that people are capable of representing and pursuing multiple subgoals at once, but that the number of subgoals is generally quite limited. Furthermore, we find that the degree to which composite goal representation is limited may be an important latent dimension for explaining individual differences in planning ability. Finally, we (hopefully!) find that the inferred representational limitations are sensitive to the cost of suboptimal planning, indicating that people may rationally choose a goal representation that trades off between representational costs and decision quality.
 
 \textbf{Keywords:} 
-planning; hierarchy; goals
+planning; problem solving; hierarchy; goals
 \end{abstract}
 
 
@@ -79,7 +79,7 @@ Much previous work in psychology has studied the strategies people use to make p
 
 However, approaches such as depth-limited search and heuristics are, in a sense, limited by their locality---what if the goal is many timesteps away, or even just out of reach? What if the heuristic cues are uninformative or simply do not exist? This, in part, motivates complementary approaches based on \textit{hierarchical decomposition}, in which a problem is holistically broken into sub-problems, each of which are then solved in the right order~\citep{sacerdoti1974planning, botvinick2012hierarchical}. Such an approach can make decision-making easier by reducing the resources needed to solve a given sub-problem at a particular time~\citep{VanDijk2011, Maisto2015}. But this raises yet another problem: What is a good way to break down a task? And what if the particular decomposition could be improved?
 
-The Sussman anomaly exemplifies what happens when a decompositions are too brittle (Figure~\ref{}, \citep{Sussman1975}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals since plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
+The Sussman anomaly exemplifies what happens when a decomposition is too  brittle (Figure~\ref{}, \citealp{Sussman1975}). In the Sussman anomaly, an agent plans with respect to a single subgoal at a time (e.g., put block A on top of block B) without considering the larger context of that subgoal with respect to other subgoals. That is, subgoals are completely \textit{context-free}. This can lead to inefficiencies (e.g., having to move A and B again in order to get B on top of C) that could have been avoided. More generally, some efficiencies in problems can only reliably be achieved by planning with respect to multiple subgoals since plans based on individual subgoals may be myopic, greedily optimizing for the subgoal at hand. For instance, Figure 1 demonstrates a case where considering a single subgoal might result in a suboptimal solution that is avoided when considering multiple subgoals. More generally, agents planning with respect to different numbers of subgoals take actions with different probabilities in various states, which forms the basis of our modeling framework.
 
 % \subsection{Search and its limitations}
 
@@ -138,7 +138,7 @@ There are several special cases of the model worth highlighting. When $k = 1$, w
 
 \section{Experiment 1: Measuring human multigoaling}
 
-To test the predictions of the multigoal model, we conducted a Tower of London (ToL) experiment \cite{Shallice1982} where an initial configuration of stacked items must be rearranged to match a goal configuration by moving one item at a time. The classic ToL task is based on the Tower of Hanoi problem, removing the constraints imposed by different-sized disks, but adding a limit to how many disks can be on each peg. Our variant of ToL uses blocks instead of disks and removes the restrictions on stack height. We additionally mark the blocks with letters and use a single standard goal position to reduce working memory requirements. This results in an unambiguous subgoal ordering \citep{Kaller2011}: One must put blocks in their place in reverse alphabetical order.
+To test the predictions of the multigoal model, we conducted a Tower of London (ToL) experiment \citep{Shallice1982} where an initial configuration of stacked items must be rearranged to match a goal configuration by moving one item at a time. The classic ToL task is based on the Tower of Hanoi problem, removing the constraints imposed by different-sized disks, but adding a limit to how many disks can be on each peg. Our variant of ToL uses blocks instead of disks and removes the restrictions on stack height. We additionally mark the blocks with letters and use a single standard goal position to reduce working memory requirements. This results in an unambiguous subgoal ordering \citep{Kaller2011}: One must put blocks in their place in reverse alphabetical order.
 % Thus, the model's simplifying assumption that the order of subgoals is given is innocuous in this specific setting. 
 
 % With these modifications to the rules, our experimental task resembles Blocks World, a domain used to investigate problem solving in artificial intelligence research \todo{XXX connect to Sussman}.
@@ -151,9 +151,9 @@ To test the predictions of the multigoal model, we conducted a Tower of London (
 \subsection{Methods}
 \subsubsection{Stimuli and procedure}
 
-In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the other or goal stack (Fig. 2). Only the top block of a stack can be moved, and the board is limited to contain at most three spaces (columns) for stacks. In all trials, the goal stack contains the same blocks arranged in alphabetical order in the middle space. 
+In each trial, participants are presented with two configurations of stacked blocks marked with letters of the alphabet and asked to rearrange the blocks in one stack to match the blocks in the goal configuration (Fig. 2). Only the top block of a stack can be moved, and the board is limited to contain at most three spaces (columns) for stacks. In all trials, the goal configuration is a single stack arranged in alphabetical order in the middle column.
 
-Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of the fixed-$k$multigoal model (Equation~\ref{eq:likelihood-fixed}) and the limited depth model on data simulated from multigoal agents with $k \in \{ 1,2,3,4 \}$.
+Participants completed three tutorial trials of increasing difficulty (a 3-block trial, a 4-block trial, and a 5-block trial) and then completed sixteen 6-block trials. Only the 6-block trials are analyzed below. Problems were selected to maximize the difference in likelihood of the fixed $k$multigoal model (Equation~\ref{eq:likelihood-fixed}) and the depth-limited model on data simulated from multigoal agents with $k \in \{ 1,2,3,4 \}$. That is, the problems were optimized to distinguish the behavioral signature of multigoals from that of constraints on search depth.
 
 \begin{figure}[ht]
     \centering
@@ -166,14 +166,14 @@ We recruited 41 participants from Amazon Mechanical Turk. Each participant recei
 
 \subsection{Model}
  
-According to the proposed multigoal model, people can select multiple subgoals to pursue concurrently, attempting to create a plan that satisfies all $k$ subgoals in the fewest steps. In the experimental task, we define a subgoal as putting a block in its correct final position. Thus, we have an ordered set of subgoals $\{ g_F, g_E, g_D, g_C, g_B, g_A \}$ such that completing them in order necessarily solves the full problem. This satisfies the simplifying assumption required by the model.
+According to the proposed multigoal model, people can select multiple subgoals to pursue concurrently, attempting to create a plan that satisfies all $k$ subgoals in the fewest steps. We define a subgoal in the experimental task as putting a block in its correct final position. Thus, we have an ordered set of subgoals $\{ g_F, g_E, g_D, g_C, g_B, g_A \}$ such that completing them in order necessarily solves the full problem. This satisfies the simplifying assumption required by the model.
 %, and \red{it is not unreasonable to assume that such a subgoal structure is apparent to the experimental participants.}
 
 
 \newcommand{\A}{\mathcal{A}}
 \newcommand{\U}{\mathcal{U}}
 
-We now derive a likelihood to use for model fitting and comparison. Given a state and a value for $k$, the model selects a multigoal $\multigoal(s; k)$ which is the set of the next $k$ uncompleted subgoals. Then, given this multigoal and a value for $d$, we find a set of optimal paths given by Equation~\ref{eq:concrete}. In the case of ties, it is not obvious how to determine which path should be chosen because the probability of finding a given path depends on the specific search algorithm one uses, a detail we remain agnostic about. Thus the model simply divides probability uniformly among the set of unique first actions in any of the identified paths. Call this set $\A^*(s; k, d)$, which is a subset of all allowable actions $\A(s)$. We can now define the likelihood of taking a single action in a given state as
+We now derive a likelihood to use for model fitting and comparison. Given a state and a value for $k$, the model selects a multigoal $\multigoal(s; k)$ which is the set of the next $k$ uncompleted subgoals. Then, given this multigoal and a value for $d$, we find a set of optimal paths given by Equation~\ref{eq:concrete}. In the case of ties, it is not obvious how to determine which path should be chosen because the probability of finding a given path depends on the specific search algorithm one uses, a detail we remain agnostic about. Thus, the model simply divides probability uniformly among the set of unique first actions in any of the identified paths. Call this set $\A^*(s; k, d)$, which is a subset of all allowable actions $\A(s)$. We can now define the likelihood of taking a single action in a given state as
 %
 \begin{equation}\label{eq:likelihood-fixed}
   \Pr(a \mid s; k, d, \epsilon) = 
@@ -185,7 +185,7 @@ where $\U$ is the Uniform distribution. Note that by defining the likelihood for
 
 To test the multigoal model, in particular to evaluate whether people show evidence of pursuing more than one goal at a time, we employ formal model comparison. The comparisons of greatest interest are special cases of the full model. A standard depth-limited search model sets $k=\infty$ and has $d$ (the search depth) as a free parameter. A standard hierarchical planning or subgoaling model sets $k=1$, allowing for only one subgoal to be pursued at a time, and also has $d$ as a free parameter. In the full model, both $k$ and $d$ are free.
 
-We consider two hypotheses for how $k$ and $d$ are chosen when they are free parameters. The first hypothesis is that the parameter is fixed for each individual. For example, one person might always consider two subgoals at a time ($k=2$)  and search fourteen steps into the future ($d=14$). The second hypothesis is that $k$ and $d$ vary from decision to decision, but follow some distribution that is particular to each individual. For example, one person might typically consider one subgoal at a time but occasionally pursue two (or rarely, three) subgoals at a time. We consider \red{two possible distributions for both $k$ and $d$}: the Geometric distribution and the Poisson distribution. Because these distribution both have a single parameter, introducing distributions over $k$ and $d$ does not increase the number of parameters in the model. To compute the likelihood, we integrate out the latent $k$ and $d$ parameters, which requires enumerating each parameter up to the value at which it results in optimal decision making (all greater values give the same prediction of optimal choices). Thus, for the models that put distributions over $k$ and/or $d$ with parameters $\theta_k$ and $\theta_d$ we have
+We consider two hypotheses for how $k$ and $d$ are chosen when they are free parameters. The first hypothesis is that the parameter is fixed for each individual. For example, one person might always consider two subgoals at a time ($k=2$)  and search fourteen steps into the future ($d=14$). The second hypothesis is that $k$ and $d$ vary from decision to decision, but follow some distribution that is particular to each individual. For example, one person might typically consider one subgoal at a time but occasionally pursue two (or rarely, three) subgoals at a time. We consider two possible distributions for both $k$ and $d$: the Geometric distribution, which has a strong positive skew, and the Poisson distribution, which can distribute mass more evenly around a mean. Because these distributions both have a single parameter, they do not increase the number of parameters in the full model. To compute the likelihood, we integrate out the latent $k$ and $d$ parameters. Thus, for the models that put distributions over $k$ and/or $d$ with parameters $\theta_k$ and $\theta_d$ we have
 %
 % \begin{equation}\label{likelihood-dist}
 % \begin{aligned}
@@ -198,12 +198,15 @@ We consider two hypotheses for how $k$ and $d$ are chosen when they are free par
 % \end{aligned}
 % \end{equation}
 %
+\red{%
 \begin{equation}\label{eq:likelihood-dist}
   \Pr(a \mid s; \theta_k, \theta_d, \epsilon) = 
-    \sum_d \sum_k
+    \sum_{d=1}^{\infty} \sum_{k=1}^{\infty}
       \Pr(a \mid s; k, d, \epsilon) \Pr(k ; \theta_k) \Pr(d ; \theta_d) \\
 .
 \end{equation}
+Despite the infinite summation, we can compute this value exactly because we need only enumerate each parameter up to the value at which it results in optimal decision making, $\theta^*$. All greater values give the same prediction, thus we can treat them as a single bin with prior probability $\Pr(\theta > \theta^*)$ evaluated at $\theta^*$ and likelihood  $\Pr(a \mid s; \theta^*)$.
+}
 
 We fit all models by maxmimum likelihood estimation. For discrete parameters we used grid search, considering all possible values of $k \in \{ 1 \dots 6 \}$ and values of $d \in \{1 \dots \MISSING \}$. For continuous parameters, we used \red{some convex optimizer} with \MISSING random initializations to mitigate the risk of finding local minima.
 
@@ -238,7 +241,6 @@ Fixed $d$ & 2 & 13348 & -6592 & 0 \\
 %, and Number of Participants best fit by the model (with parameters optimized separately)
 \end{table}
 
- 
 Models were fit for each participant, see Figure 3.
 
 Models with distributions over model parameters $k$ and $d$ were generally better fits than those with fixed parameters, suggesting that people flexibly adapt these limitations on planning.
